@@ -98,7 +98,7 @@ export default function EventoDetalhesPage() {
     (artigo) => artigo.status === "submetido"
   ).length;
   const artigosAvaliacao = artigos.filter(
-    (artigo) => artigo.status === "em_avaliacao"
+    (artigo) => artigo.status === "em_revisao"
   ).length;
   const artigosRevisao = artigos.filter(
     (artigo) => artigo.status === "revisao"

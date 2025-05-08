@@ -18,7 +18,7 @@ export async function getEventos() {
     },
     {
       id: 2,
-      nome: "Simpósio de Pesquisa Acadêmica",
+      nome: "Simpósio de Pesquisa Acadêmica Biopark",
       banner: "/congresso2.jpg",
       descricao: "Evento semestral para apresentação de pesquisas acadêmicas",
       data_inicio: "2025-06-10",
@@ -64,13 +64,14 @@ export async function getArtigos(userId = null) {
         versao: "1.0",
         data_cadastro: "2025-03-15",
       },
+      evento: "Congresso Biopark de Inovação 2025",
     },
     {
       id: 2,
       titulo: "Sustentabilidade na Produção Agrícola",
       resumo: "Análise de métodos sustentáveis para produção agrícola...",
       area_tematica: "Agricultura e Meio Ambiente",
-      status: "em_avaliacao",
+      status: "em_revisao",
       autores: [
         { id: 1, nome: "João Silva" },
         { id: 3, nome: "Carlos Mendes" },
@@ -82,6 +83,7 @@ export async function getArtigos(userId = null) {
         versao: "1.0",
         data_cadastro: "2025-04-10",
       },
+      evento: "Congresso Biopark de Inovação 2025",
     },
     {
       id: 3,
@@ -100,6 +102,7 @@ export async function getArtigos(userId = null) {
         versao: "1.0",
         data_cadastro: "2025-04-20",
       },
+      evento: "Simpósio de Pesquisa Acadêmica Biopark",
     },
   ];
 

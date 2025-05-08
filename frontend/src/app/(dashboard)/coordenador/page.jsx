@@ -1,15 +1,31 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { getArtigos, getEventos, getUsuarios } from '@/lib/api';
-import { getUser } from '@/lib/auth';
-import { Calendar, Users, FileText, AlertCircle, CheckCircle, Clock, Flag, Award } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { formatDate, formatStatus, getStatusColor } from '@/lib/utils';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getArtigos, getEventos, getUsuarios } from "@/lib/api";
+import { getUser } from "@/lib/auth";
+import {
+  Calendar,
+  Users,
+  FileText,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Flag,
+  Award,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { formatDate, formatStatus, getStatusColor } from "@/lib/utils";
 
 export default function CoordenadorDashboard() {
   const [artigos, setArtigos] = useState([]);
@@ -33,7 +49,7 @@ export default function CoordenadorDashboard() {
         const usuariosData = await getUsuarios();
         setUsuarios(usuariosData);
       } catch (error) {
-        console.error('Erro ao buscar dados:', error);
+        console.error("Erro ao buscar dados:", error);
       } finally {
         setIsLoading(false);
       }
@@ -43,25 +59,35 @@ export default function CoordenadorDashboard() {
   }, []);
 
   // Contagem de usuários por perfil
-  const autores = usuarios.filter(user => user.cargos.includes('autor')).length;
-  const avaliadores = usuarios.filter(user => user.cargos.includes('avaliador')).length;
-  
+  const autores = usuarios.filter((user) =>
+    user.cargos.includes("autor")
+  ).length;
+  const avaliadores = usuarios.filter((user) =>
+    user.cargos.includes("avaliador")
+  ).length;
+
   // Contagem de artigos por status
   const artigosEmAvaliacao = artigos.filter(
-    artigo => artigo.status === 'submetido' || artigo.status === 'em_avaliacao'
+    (artigo) => artigo.status === "submetido" || artigo.status === "em_revisao"
   ).length;
   const artigosAprovados = artigos.filter(
-    artigo => artigo.status === 'aprovado' || artigo.status === 'publicado'
+    (artigo) => artigo.status === "aprovado" || artigo.status === "publicado"
   ).length;
-  const artigosReprovados = artigos.filter(artigo => artigo.status === 'reprovado').length;
-  
+  const artigosReprovados = artigos.filter(
+    (artigo) => artigo.status === "reprovado"
+  ).length;
+
   // Eventos ativos
-  const eventosAtivos = eventos.filter(evento => evento.status === 'ativo').length;
+  const eventosAtivos = eventos.filter(
+    (evento) => evento.status === "ativo"
+  ).length;
 
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard do Coordenador</h2>
+        <h2 className="text-3xl font-bold tracking-tight">
+          Dashboard do Coordenador
+        </h2>
         <Button asChild>
           <Link href="/coordenador/eventos/novo">
             <Calendar className="mr-2 h-4 w-4" />
@@ -74,7 +100,9 @@ export default function CoordenadorDashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Artigos</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total de Artigos
+            </CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -83,7 +111,9 @@ export default function CoordenadorDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Eventos Ativos</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Eventos Ativos
+            </CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -102,7 +132,16 @@ export default function CoordenadorDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Avaliadores</CardTitle>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-muted-foreground">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-4 w-4 text-muted-foreground"
+            >
               <path d="M12 8a1 1 0 0 1 0 2 1 1 0 0 1 0-2z" />
               <path d="M17.3 5.7a10 10 0 0 1 0 14.1" />
               <path d="M6.7 19.8a10 10 0 0 1 0-14.1" />
@@ -120,7 +159,7 @@ export default function CoordenadorDashboard() {
           <TabsTrigger value="eventos">Eventos</TabsTrigger>
           <TabsTrigger value="usuarios">Usuários</TabsTrigger>
         </TabsList>
-        
+
         {/* Artigos Tab */}
         <TabsContent value="artigos" className="space-y-4">
           <div className="flex items-center justify-between">
@@ -129,23 +168,23 @@ export default function CoordenadorDashboard() {
               <Link href="/coordenador/artigos">Ver Todos</Link>
             </Button>
           </div>
-          
+
           <div className="grid gap-4 md:grid-cols-3">
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium flex items-center">
                   <Clock className="mr-2 h-4 w-4 text-yellow-500" />
-                  Em Avaliação
+                  Em revisão
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{artigosEmAvaliacao}</div>
                 <p className="text-xs text-muted-foreground">
-                  Artigos aguardando ou em processo de avaliação
+                  Artigos aguardando ou em processo de revisão
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium flex items-center">
@@ -160,7 +199,7 @@ export default function CoordenadorDashboard() {
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium flex items-center">
@@ -176,25 +215,26 @@ export default function CoordenadorDashboard() {
               </CardContent>
             </Card>
           </div>
-          
+
           <Card>
             <CardHeader>
               <CardTitle>Artigos Recentes</CardTitle>
-              <CardDescription>
-                Últimas submissões recebidas
-              </CardDescription>
+              <CardDescription>Últimas submissões recebidas</CardDescription>
             </CardHeader>
             <CardContent>
               {isLoading ? (
                 <p className="text-center py-4">Carregando...</p>
               ) : artigos.length > 0 ? (
                 <div className="space-y-4">
-                  {artigos.slice(0, 5).map(artigo => (
-                    <div key={artigo.id} className="flex justify-between items-center border-b pb-3">
+                  {artigos.slice(0, 5).map((artigo) => (
+                    <div
+                      key={artigo.id}
+                      className="flex justify-between items-center border-b pb-3"
+                    >
                       <div>
                         <h4 className="font-medium">{artigo.titulo}</h4>
                         <p className="text-sm text-muted-foreground">
-                          {artigo.autores.map(autor => autor.nome).join(', ')}
+                          {artigo.autores.map((autor) => autor.nome).join(", ")}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -218,7 +258,7 @@ export default function CoordenadorDashboard() {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         {/* Eventos Tab */}
         <TabsContent value="eventos" className="space-y-4">
           <div className="flex items-center justify-between">
@@ -227,19 +267,30 @@ export default function CoordenadorDashboard() {
               <Link href="/coordenador/eventos">Ver Todos</Link>
             </Button>
           </div>
-          
+
           {isLoading ? (
             <p>Carregando...</p>
           ) : eventos.length > 0 ? (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {eventos.slice(0, 3).map(evento => (
+              {eventos.slice(0, 3).map((evento) => (
                 <Card key={evento.id}>
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">
                       <CardTitle>{evento.nome}</CardTitle>
-                      <Badge variant={evento.status === 'ativo' ? 'default' : 'outline'}>
-                        {evento.status === 'ativo' ? 'Ativo' : 
-                         evento.status === 'encerrado' ? 'Encerrado' : 'Planejado'}
+                      <Badge
+                        variant={
+                          evento.status === "ativo"
+                            ? "ativo"
+                            : evento.status === "encerrado"
+                            ? "encerrado"
+                            : "planejado"
+                        }
+                      >
+                        {evento.status === "ativo"
+                          ? "Ativo"
+                          : evento.status === "encerrado"
+                          ? "Encerrado"
+                          : "Planejado"}
                       </Badge>
                     </div>
                     <CardDescription>{evento.descricao}</CardDescription>
@@ -276,7 +327,7 @@ export default function CoordenadorDashboard() {
             </Card>
           )}
         </TabsContent>
-        
+
         {/* Usuários Tab */}
         <TabsContent value="usuarios" className="space-y-4">
           <div className="flex items-center justify-between">
@@ -285,7 +336,7 @@ export default function CoordenadorDashboard() {
               <Link href="/coordenador/usuarios">Ver Todos</Link>
             </Button>
           </div>
-          
+
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader className="pb-2">
@@ -301,7 +352,7 @@ export default function CoordenadorDashboard() {
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium flex items-center">
@@ -317,27 +368,30 @@ export default function CoordenadorDashboard() {
               </CardContent>
             </Card>
           </div>
-          
+
           <Card>
             <CardHeader>
               <CardTitle>Usuários Recentes</CardTitle>
-              <CardDescription>
-                Últimos usuários cadastrados
-              </CardDescription>
+              <CardDescription>Últimos usuários cadastrados</CardDescription>
             </CardHeader>
             <CardContent>
               {isLoading ? (
                 <p className="text-center py-4">Carregando...</p>
               ) : usuarios.length > 0 ? (
                 <div className="space-y-4">
-                  {usuarios.slice(0, 5).map(usuario => (
-                    <div key={usuario.id} className="flex justify-between items-center border-b pb-3">
+                  {usuarios.slice(0, 5).map((usuario) => (
+                    <div
+                      key={usuario.id}
+                      className="flex justify-between items-center border-b pb-3"
+                    >
                       <div>
                         <h4 className="font-medium">{usuario.nome}</h4>
-                        <p className="text-sm text-muted-foreground">{usuario.email}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {usuario.email}
+                        </p>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {usuario.cargos.map(cargo => (
+                        {usuario.cargos.map((cargo) => (
                           <Badge key={cargo} variant="outline">
                             {cargo}
                           </Badge>

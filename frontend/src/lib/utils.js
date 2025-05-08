@@ -16,10 +16,10 @@ export function cn(...inputs) {
  * @returns {string} - Data formatada
  */
 export function formatDate(date) {
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
   }).format(new Date(date));
 }
 
@@ -30,14 +30,13 @@ export function formatDate(date) {
  */
 export function formatStatus(status) {
   const statusMap = {
-    'submetido': 'Em análise',
-    'em_avaliacao': 'Em avaliação',
-    'aprovado': 'Aprovado',
-    'reprovado': 'Reprovado',
-    'revisao': 'Revisão solicitada',
-    'publicado': 'Publicado'
+    submetido: "Em análise",
+    em_revisao: "Em revisão",
+    aprovado: "Aprovado",
+    reprovado: "Reprovado",
+    revisao: "Revisão solicitada",
   };
-  
+
   return statusMap[status] || status;
 }
 
@@ -48,15 +47,15 @@ export function formatStatus(status) {
  */
 export function getStatusColor(status) {
   const colorMap = {
-    'submetido': 'bg-blue-100 text-blue-800',
-    'em_avaliacao': 'bg-yellow-100 text-yellow-800',
-    'aprovado': 'bg-green-100 text-green-800',
-    'reprovado': 'bg-red-100 text-red-800',
-    'revisao': 'bg-purple-100 text-purple-800',
-    'publicado': 'bg-emerald-100 text-emerald-800'
+    submetido: "bg-blue-100 text-blue-800",
+    em_revisao: "bg-yellow-100 text-yellow-800",
+    aprovado: "bg-green-100 text-green-800",
+    reprovado: "bg-red-100 text-red-800",
+    revisao: "bg-purple-100 text-purple-800",
+    publicado: "bg-emerald-100 text-emerald-800",
   };
-  
-  return colorMap[status] || 'bg-gray-100 text-gray-800';
+
+  return colorMap[status] || "bg-gray-100 text-gray-800";
 }
 
 /**
@@ -67,7 +66,7 @@ export function getStatusColor(status) {
  */
 export function truncateText(text, maxLength = 100) {
   if (!text || text.length <= maxLength) return text;
-  return text.slice(0, maxLength) + '...';
+  return text.slice(0, maxLength) + "...";
 }
 
 /**
