@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 import {
   FileText,
   Upload,
@@ -8,94 +8,94 @@ import {
   Users,
   ClipboardList,
   Settings,
-  Home
-} from 'lucide-react';
+  Home,
+} from "lucide-react";
 
 const authorRoutes = [
   {
-    title: 'Dashboard',
-    href: '/autor',
+    title: "Dashboard",
+    href: "/autor",
     icon: Home,
   },
   {
-    title: 'Meus Artigos',
-    href: '/autor/artigos',
+    title: "Meus Artigos",
+    href: "/autor/artigos",
     icon: FileText,
   },
   {
-    title: 'Nova Submissão',
-    href: '/autor/submissao',
+    title: "Nova Submissão",
+    href: "/autor/submissao",
     icon: Upload,
   },
   {
-    title: 'Eventos',
-    href: '/eventos',
+    title: "Eventos",
+    href: "/autor/eventos",
     icon: Calendar,
   },
 ];
 
 const reviewerRoutes = [
   {
-    title: 'Dashboard',
-    href: '/avaliador',
+    title: "Dashboard",
+    href: "/avaliador",
     icon: Home,
   },
   {
-    title: 'Avaliações',
-    href: '/avaliador/avaliacoes',
+    title: "Avaliações",
+    href: "/avaliador/avaliacoes",
     icon: Award,
   },
   {
-    title: 'Eventos',
-    href: '/eventos',
+    title: "Eventos",
+    href: "/avaliador/eventos",
     icon: Calendar,
   },
 ];
 
 const coordinatorRoutes = [
   {
-    title: 'Dashboard',
-    href: '/coordenador',
+    title: "Dashboard",
+    href: "/coordenador",
     icon: Home,
   },
   {
-    title: 'Eventos',
-    href: '/coordenador/eventos',
+    title: "Eventos",
+    href: "/coordenador/eventos",
     icon: Calendar,
   },
   {
-    title: 'Artigos',
-    href: '/coordenador/artigos',
+    title: "Artigos",
+    href: "/coordenador/artigos",
     icon: FileText,
   },
   {
-    title: 'Usuários',
-    href: '/coordenador/usuarios',
+    title: "Usuários",
+    href: "/coordenador/usuarios",
     icon: Users,
   },
   {
-    title: 'Checklists',
-    href: '/coordenador/checklists',
+    title: "Checklists",
+    href: "/coordenador/checklists",
     icon: ClipboardList,
   },
   {
-    title: 'Configurações',
-    href: '/coordenador/configuracoes',
+    title: "Configurações",
+    href: "/coordenador/configuracoes",
     icon: Settings,
   },
 ];
 
-export function Sidebar({ className, role = 'autor' }) {
+export function Sidebar({ className, role = "autor" }) {
   let routes;
 
   switch (role) {
-    case 'autor':
+    case "autor":
       routes = authorRoutes;
       break;
-    case 'avaliador':
+    case "avaliador":
       routes = reviewerRoutes;
       break;
-    case 'coordenador':
+    case "coordenador":
       routes = coordinatorRoutes;
       break;
     default:
@@ -103,7 +103,12 @@ export function Sidebar({ className, role = 'autor' }) {
   }
 
   return (
-    <div className={cn("pb-12 w-64 border-r h-screen", className)}>
+    <div
+      className={cn(
+        "fixed top-0 left-0 pb-12 w-64 h-screen bg-white border-r z-10", // Classes para fixar a sidebar
+        className
+      )}
+    >
       <div className="space-y-4 py-4">
         <div className="px-4 py-2">
           <h2 className="mb-2 px-2 text-lg font-semibold tracking-tight">

@@ -15,14 +15,11 @@ const router = Router();
 router.post(
   '/',
   [
-    authenticate,
-    isCoordenador,
     uploadBanner,
     body('nome').notEmpty().withMessage('Nome é obrigatório'),
     body('descricao').notEmpty().withMessage('Descrição é obrigatória'),
     body('dataInicio').notEmpty().withMessage('Data de início é obrigatória'),
     body('dataFim').notEmpty().withMessage('Data de fim é obrigatória'),
-    body('statusEventoId').isInt().withMessage('Status do evento é obrigatório'),
   ],
   eventoController.createEvento
 );
@@ -63,15 +60,12 @@ router.get(
 router.put(
   '/:id',
   [
-    authenticate,
-    isCoordenador,
     uploadBanner,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
     body('nome').optional().notEmpty().withMessage('Nome não pode ser vazio'),
     body('descricao').optional().notEmpty().withMessage('Descrição não pode ser vazia'),
     body('dataInicio').optional().isString().withMessage('Data de início deve ser uma string'),
     body('dataFim').optional().isString().withMessage('Data de fim deve ser uma string'),
-    body('statusEventoId').optional().isInt().withMessage('Status do evento deve ser um número inteiro'),
   ],
   eventoController.updateEvento
 );
@@ -84,8 +78,6 @@ router.put(
 router.delete(
   '/:id',
   [
-    authenticate,
-    isCoordenador,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
   ],
   eventoController.deleteEvento
@@ -99,8 +91,6 @@ router.delete(
 router.post(
   '/:id/avaliadores',
   [
-    authenticate,
-    isCoordenador,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
     body('avaliadoresIds').isArray().withMessage('avaliadoresIds deve ser um array'),
     body('avaliadoresIds.*').isInt().withMessage('IDs dos avaliadores devem ser números inteiros'),
@@ -116,8 +106,6 @@ router.post(
 router.delete(
   '/:id/avaliadores',
   [
-    authenticate,
-    isCoordenador,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
     body('avaliadoresIds').isArray().withMessage('avaliadoresIds deve ser um array'),
     body('avaliadoresIds.*').isInt().withMessage('IDs dos avaliadores devem ser números inteiros'),
@@ -133,7 +121,6 @@ router.delete(
 router.get(
   '/:id/avaliadores',
   [
-    authenticate,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
   ],
   eventoController.getAvaliadoresEvento
@@ -147,8 +134,6 @@ router.get(
 router.post(
   '/:id/checklist',
   [
-    authenticate,
-    isCoordenador,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
     body('perguntas').isArray().withMessage('Perguntas deve ser um array'),
     body('perguntas.*.descricao').notEmpty().withMessage('Descrição da pergunta é obrigatória'),
@@ -161,6 +146,5 @@ router.post(
  * @desc Busca todos os status de evento
  * @access Public
  */
-router.get('/status-eventos', eventoController.getAllStatusEvento);
 
 export default router;

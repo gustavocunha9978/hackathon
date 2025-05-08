@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -9,18 +9,18 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -29,9 +29,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { getArtigo, getUsuarios } from '@/lib/api';
-import { formatDate, formatStatus, getStatusColor } from '@/lib/utils';
+} from "@/components/ui/dialog";
+import { getArtigo, getUsuarios } from "@/lib/api";
+import { formatDate, formatStatus, getStatusColor } from "@/lib/utils";
 import {
   Calendar,
   Clock,
@@ -45,24 +45,24 @@ import {
   Mail,
   AlertTriangle,
   CheckCircle,
-} from 'lucide-react';
+} from "lucide-react";
 
 export default function ArtigoDetalhesPage() {
   const params = useParams();
   const router = useRouter();
-  
+
   const [artigo, setArtigo] = useState(null);
   const [avaliadores, setAvaliadores] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
-  
+  const [error, setError] = useState("");
+
   const [statusDialog, setStatusDialog] = useState(false);
   const [avaliadoresDialog, setAvaliadoresDialog] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState('');
-  const [statusNote, setStatusNote] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [statusNote, setStatusNote] = useState("");
   const [selectedAvaliadores, setSelectedAvaliadores] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [success, setSuccess] = useState('');
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,21 +71,21 @@ export default function ArtigoDetalhesPage() {
         // Busca os detalhes do artigo
         const artigoData = await getArtigo(params.id);
         if (!artigoData) {
-          setError('Artigo não encontrado');
+          setError("Artigo não encontrado");
         } else {
           setArtigo(artigoData);
           setSelectedStatus(artigoData.status);
-          
+
           // Busca usuários que podem ser avaliadores
           const usuariosData = await getUsuarios();
-          const avaliadoresData = usuariosData.filter(user => 
-            user.cargos.includes('avaliador')
+          const avaliadoresData = usuariosData.filter((user) =>
+            user.cargos.includes("avaliador")
           );
           setAvaliadores(avaliadoresData);
         }
       } catch (error) {
-        console.error('Erro ao buscar dados:', error);
-        setError('Ocorreu um erro ao buscar os detalhes do artigo');
+        console.error("Erro ao buscar dados:", error);
+        setError("Ocorreu um erro ao buscar os detalhes do artigo");
       } finally {
         setIsLoading(false);
       }
@@ -100,19 +100,19 @@ export default function ArtigoDetalhesPage() {
     setIsSubmitting(true);
     try {
       // Simulação de atualização do status
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Atualiza o estado local
-      setArtigo(prev => ({
+      setArtigo((prev) => ({
         ...prev,
-        status: selectedStatus
+        status: selectedStatus,
       }));
-      
+
       setSuccess(`Status atualizado para "${formatStatus(selectedStatus)}"`);
       setStatusDialog(false);
     } catch (error) {
-      console.error('Erro ao atualizar status:', error);
-      setError('Ocorreu um erro ao atualizar o status do artigo');
+      console.error("Erro ao atualizar status:", error);
+      setError("Ocorreu um erro ao atualizar o status do artigo");
     } finally {
       setIsSubmitting(false);
     }
@@ -122,13 +122,13 @@ export default function ArtigoDetalhesPage() {
     setIsSubmitting(true);
     try {
       // Simulação de atribuição de avaliadores
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       setSuccess(`Avaliadores atribuídos com sucesso!`);
       setAvaliadoresDialog(false);
     } catch (error) {
-      console.error('Erro ao atribuir avaliadores:', error);
-      setError('Ocorreu um erro ao atribuir avaliadores');
+      console.error("Erro ao atribuir avaliadores:", error);
+      setError("Ocorreu um erro ao atribuir avaliadores");
     } finally {
       setIsSubmitting(false);
     }
@@ -145,7 +145,9 @@ export default function ArtigoDetalhesPage() {
   if (error || !artigo) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <p className="text-destructive mb-4">{error || 'Artigo não encontrado'}</p>
+        <p className="text-destructive mb-4">
+          {error || "Artigo não encontrado"}
+        </p>
         <Button variant="outline" onClick={() => router.back()}>
           <ChevronLeft className="mr-2 h-4 w-4" />
           Voltar
@@ -161,7 +163,7 @@ export default function ArtigoDetalhesPage() {
           <ChevronLeft className="mr-2 h-4 w-4" />
           Voltar
         </Button>
-        
+
         <div className="flex gap-2">
           <Button variant="secondary">
             <Download className="mr-2 h-4 w-4" />
@@ -183,7 +185,8 @@ export default function ArtigoDetalhesPage() {
             <div>
               <CardTitle className="text-2xl">{artigo.titulo}</CardTitle>
               <CardDescription className="mt-2">
-                Versão {artigo.versao_atual.versao} • Submetido em {formatDate(artigo.versao_atual.data_cadastro)}
+                Versão {artigo.versao_atual.versao} • Submetido em{" "}
+                {formatDate(artigo.versao_atual.data_cadastro)}
               </CardDescription>
             </div>
             <Badge className={getStatusColor(artigo.status)}>
@@ -205,21 +208,27 @@ export default function ArtigoDetalhesPage() {
                   <FileText className="h-5 w-5 text-muted-foreground mt-0.5" />
                   <div>
                     <p className="font-medium">Área Temática</p>
-                    <p className="text-muted-foreground">{artigo.area_tematica}</p>
+                    <p className="text-muted-foreground">
+                      {artigo.area_tematica}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
                   <div>
                     <p className="font-medium">Data de Submissão</p>
-                    <p className="text-muted-foreground">{formatDate(artigo.versao_atual.data_cadastro)}</p>
+                    <p className="text-muted-foreground">
+                      {formatDate(artigo.versao_atual.data_cadastro)}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
                   <div>
                     <p className="font-medium">Status Atual</p>
-                    <p className="text-muted-foreground">{formatStatus(artigo.status)}</p>
+                    <p className="text-muted-foreground">
+                      {formatStatus(artigo.status)}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -233,7 +242,9 @@ export default function ArtigoDetalhesPage() {
                     <Users className="h-5 w-5 text-muted-foreground mt-0.5" />
                     <div>
                       <p className="font-medium">{autor.nome}</p>
-                      <p className="text-muted-foreground">Autor {index === 0 ? 'Principal' : `#${index + 1}`}</p>
+                      <p className="text-muted-foreground">
+                        Autor {index === 0 ? "Principal" : `#${index + 1}`}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -245,7 +256,11 @@ export default function ArtigoDetalhesPage() {
             <h3 className="text-lg font-semibold mb-2">Palavras-chave</h3>
             <div className="flex flex-wrap gap-2">
               {artigo.palavras_chave.map((palavra, index) => (
-                <Badge key={index} variant="outline" className="flex items-center gap-1">
+                <Badge
+                  key={index}
+                  variant="outline"
+                  className="flex items-center gap-1"
+                >
                   <Tag className="h-3 w-3" />
                   {palavra}
                 </Badge>
@@ -269,7 +284,9 @@ export default function ArtigoDetalhesPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Status Atual</p>
-                  <p className="text-muted-foreground">{formatStatus(artigo.status)}</p>
+                  <p className="text-muted-foreground">
+                    {formatStatus(artigo.status)}
+                  </p>
                 </div>
                 <Dialog open={statusDialog} onOpenChange={setStatusDialog}>
                   <DialogTrigger asChild>
@@ -279,26 +296,29 @@ export default function ArtigoDetalhesPage() {
                     <DialogHeader>
                       <DialogTitle>Alterar Status do Artigo</DialogTitle>
                       <DialogDescription>
-                        Selecione o novo status e adicione uma observação se necessário.
+                        Selecione o novo status e adicione uma observação se
+                        necessário.
                       </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
                         <Label htmlFor="status">Novo Status</Label>
-                        <Select 
-                          value={selectedStatus} 
+                        <Select
+                          value={selectedStatus}
                           onValueChange={setSelectedStatus}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione o status" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="submetido">Em análise</SelectItem>
-                            <SelectItem value="em_avaliacao">Em avaliação</SelectItem>
-                            <SelectItem value="revisao">Revisão solicitada</SelectItem>
+                            <SelectItem value="submetido">
+                              Aguardando avaliação
+                            </SelectItem>
+                            <SelectItem value="aguardando_correcao">
+                              Aguardando correção
+                            </SelectItem>
                             <SelectItem value="aprovado">Aprovado</SelectItem>
                             <SelectItem value="reprovado">Reprovado</SelectItem>
-                            <SelectItem value="publicado">Publicado</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -314,9 +334,17 @@ export default function ArtigoDetalhesPage() {
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button variant="outline" onClick={() => setStatusDialog(false)}>Cancelar</Button>
-                      <Button onClick={handleStatusChange} disabled={isSubmitting}>
-                        {isSubmitting ? 'Salvando...' : 'Salvar Alterações'}
+                      <Button
+                        variant="outline"
+                        onClick={() => setStatusDialog(false)}
+                      >
+                        Cancelar
+                      </Button>
+                      <Button
+                        onClick={handleStatusChange}
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? "Salvando..." : "Salvar Alterações"}
                       </Button>
                     </DialogFooter>
                   </DialogContent>
@@ -339,10 +367,14 @@ export default function ArtigoDetalhesPage() {
                 <div>
                   <p className="font-medium">Avaliadores Atribuídos</p>
                   <p className="text-muted-foreground">
-                    {artigo.avaliadores ? artigo.avaliadores.length : 0} avaliadores
+                    {artigo.avaliadores ? artigo.avaliadores.length : 0}{" "}
+                    avaliadores
                   </p>
                 </div>
-                <Dialog open={avaliadoresDialog} onOpenChange={setAvaliadoresDialog}>
+                <Dialog
+                  open={avaliadoresDialog}
+                  onOpenChange={setAvaliadoresDialog}
+                >
                   <DialogTrigger asChild>
                     <Button>Atribuir Avaliadores</Button>
                   </DialogTrigger>
@@ -356,24 +388,37 @@ export default function ArtigoDetalhesPage() {
                     <div className="py-4">
                       <div className="max-h-[300px] overflow-auto space-y-2">
                         {avaliadores.map((avaliador) => (
-                          <div key={avaliador.id} className="flex items-center space-x-2">
+                          <div
+                            key={avaliador.id}
+                            className="flex items-center space-x-2"
+                          >
                             <input
                               type="checkbox"
                               id={`avaliador-${avaliador.id}`}
                               value={avaliador.id}
-                              checked={selectedAvaliadores.includes(avaliador.id)}
+                              checked={selectedAvaliadores.includes(
+                                avaliador.id
+                              )}
                               onChange={(e) => {
                                 if (e.target.checked) {
-                                  setSelectedAvaliadores([...selectedAvaliadores, avaliador.id]);
+                                  setSelectedAvaliadores([
+                                    ...selectedAvaliadores,
+                                    avaliador.id,
+                                  ]);
                                 } else {
                                   setSelectedAvaliadores(
-                                    selectedAvaliadores.filter(id => id !== avaliador.id)
+                                    selectedAvaliadores.filter(
+                                      (id) => id !== avaliador.id
+                                    )
                                   );
                                 }
                               }}
                               className="h-4 w-4 rounded border-gray-300 focus:ring-primary"
                             />
-                            <label htmlFor={`avaliador-${avaliador.id}`} className="text-sm">
+                            <label
+                              htmlFor={`avaliador-${avaliador.id}`}
+                              className="text-sm"
+                            >
                               {avaliador.nome} ({avaliador.email})
                             </label>
                           </div>
@@ -381,9 +426,17 @@ export default function ArtigoDetalhesPage() {
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button variant="outline" onClick={() => setAvaliadoresDialog(false)}>Cancelar</Button>
-                      <Button onClick={handleAvaliadoresAssign} disabled={isSubmitting}>
-                        {isSubmitting ? 'Salvando...' : 'Confirmar Atribuição'}
+                      <Button
+                        variant="outline"
+                        onClick={() => setAvaliadoresDialog(false)}
+                      >
+                        Cancelar
+                      </Button>
+                      <Button
+                        onClick={handleAvaliadoresAssign}
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? "Salvando..." : "Confirmar Atribuição"}
                       </Button>
                     </DialogFooter>
                   </DialogContent>
@@ -410,13 +463,17 @@ export default function ArtigoDetalhesPage() {
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <Award className="h-5 w-5 text-primary" />
-                      <span className="font-medium">Avaliador #{index + 1}</span>
+                      <span className="font-medium">
+                        Avaliador #{index + 1}
+                      </span>
                     </div>
                     <Badge className="bg-blue-100 text-blue-800">
                       Nota: {avaliacao.nota}/10
                     </Badge>
                   </div>
-                  <p className="text-muted-foreground mb-2">{avaliacao.observacao}</p>
+                  <p className="text-muted-foreground mb-2">
+                    {avaliacao.observacao}
+                  </p>
                   <p className="text-sm text-muted-foreground">
                     Avaliado em {formatDate(avaliacao.data_avaliacao)}
                   </p>

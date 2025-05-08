@@ -138,7 +138,7 @@ class AvaliacaoService {
       // 100% de aprovação: Status "Aprovado" (3)
       novoStatusId = 3;
     } else if (revisoes > 0 || (aprovacoes > 0 && reprovacoes > 0)) {
-      // Revisões ou mistura de aprovações e reprovações: Status "Em Revisão" (2)
+      // Revisões ou mistura de aprovações e reprovações: Status "Aguardando correção" (2)
       novoStatusId = 2;
     } else {
       // Mantém o status atual
@@ -212,7 +212,7 @@ class AvaliacaoService {
    */
   async responderChecklist(
     versaoArtigoId: number,
-    perguntas: Array<{ perguntaIdpergunta: number; checked: boolean }>
+    perguntas: Array<{ perguntaIdpergunta: number; checked: boolean }>,
   ) {
     // Verifica se a versão do artigo existe
     const versaoArtigo = await prisma.versaoArtigo.findUnique({
@@ -224,7 +224,7 @@ class AvaliacaoService {
     }
 
     // Cria as respostas às perguntas
-    const respostasPromises = perguntas.map((pergunta) =>
+    const respostasPromises = perguntas.map(pergunta =>
       prisma.perguntaArtigo.create({
         data: {
           checked: pergunta.checked ? 'Sim' : 'Não',
@@ -234,13 +234,13 @@ class AvaliacaoService {
         include: {
           pergunta: true,
         },
-      })
+      }),
     );
 
     const respostas = await Promise.all(respostasPromises);
 
     // Formata os dados das respostas
-    return respostas.map((resposta) => ({
+    return respostas.map(resposta => ({
       idperguntaArtigo: resposta.idpergunta_artigo,
       checked: resposta.checked,
       pergunta: {

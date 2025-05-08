@@ -7,9 +7,11 @@ import avaliacaoRoutes from './avaliacao.routes';
 import comentarioRoutes from './comentario.routes';
 import publicacaoRoutes from './publicacao.routes';
 import checklistRoutes from './checklist.routes';
+import { analyzeRoutes } from "./analyze.routes";
 
 const router = Router();
 
+router.use("/pdf", analyzeRoutes); 
 // Rotas de autenticação
 router.use('/auth', authRoutes);
 
@@ -38,23 +40,12 @@ router.use('/publicacoes', publicacaoRoutes);
 router.get('/status-artigos', (req, res) => {
   const statusArtigos = [
     { idstatusArtigo: 1, descricao: 'Em Avaliação' },
-    { idstatusArtigo: 2, descricao: 'Em Revisão' },
+    { idstatusArtigo: 2, descricao: 'Aguardando correção' },
     { idstatusArtigo: 3, descricao: 'Aprovado' },
     { idstatusArtigo: 4, descricao: 'Reprovado' },
   ];
-  
-  return res.status(200).json(statusArtigos);
-});
 
-router.get('/status-eventos', (req, res) => {
-  const statusEventos = [
-    { idstatusEvento: 1, descricao: 'Em Preparação' },
-    { idstatusEvento: 2, descricao: 'Submissões Abertas' },
-    { idstatusEvento: 3, descricao: 'Em Avaliação' },
-    { idstatusEvento: 4, descricao: 'Finalizado' },
-  ];
-  
-  return res.status(200).json(statusEventos);
+  return res.status(200).json(statusArtigos);
 });
 
 router.get('/cargos', (req, res) => {
@@ -63,7 +54,7 @@ router.get('/cargos', (req, res) => {
     { idcargo: 2, nome: 'Avaliador' },
     { idcargo: 3, nome: 'Autor' },
   ];
-  
+
   return res.status(200).json(cargos);
 });
 

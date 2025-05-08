@@ -15,7 +15,6 @@ const router = Router();
 router.post(
   '/',
   [
-    authenticate,
     uploadArtigoPdf,
     body('titulo').notEmpty().withMessage('Título é obrigatório'),
     body('resumo').notEmpty().withMessage('Resumo é obrigatório'),
@@ -35,8 +34,6 @@ router.post(
 router.get(
   '/',
   [
-    authenticate,
-    isCoordenador,
     query('evento').optional().isInt().withMessage('Evento deve ser um número inteiro'),
     query('areaTematica').optional().isString().withMessage('Área temática deve ser uma string'),
     query('autor').optional().isInt().withMessage('Autor deve ser um número inteiro'),
@@ -54,7 +51,6 @@ router.get(
 router.get(
   '/:id',
   [
-    authenticate,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
   ],
   artigoController.getArtigoById
@@ -68,7 +64,6 @@ router.get(
 router.put(
   '/:id',
   [
-    authenticate,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
     body('titulo').optional().notEmpty().withMessage('Título não pode ser vazio'),
     body('resumo').optional().notEmpty().withMessage('Resumo não pode ser vazio'),
@@ -87,8 +82,6 @@ router.put(
 router.put(
   '/:id/status',
   [
-    authenticate,
-    isCoordenador,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
     body('statusArtigoId').isInt().withMessage('Status do artigo é obrigatório'),
   ],
@@ -103,7 +96,6 @@ router.put(
 router.post(
   '/:id/versoes',
   [
-    authenticate,
     uploadArtigoPdf,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
   ],
@@ -118,7 +110,6 @@ router.post(
 router.get(
   '/usuarios/:id/artigos',
   [
-    authenticate,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
   ],
   artigoController.getArtigosByAutor
@@ -132,7 +123,6 @@ router.get(
 router.get(
   '/avaliadores/:id/artigos',
   [
-    authenticate,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
   ],
   artigoController.getArtigosParaAvaliacao

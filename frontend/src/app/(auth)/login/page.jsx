@@ -7,9 +7,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { login } from '@/lib/auth';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import {login} from '../../../lib/api'
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -69,9 +69,6 @@ export default function LoginPage() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="password">Senha</Label>
-                    <Link href="/esqueci-senha" className="text-sm text-primary hover:underline">
-                      Esqueceu a senha?
-                    </Link>
                   </div>
                   <Input
                     id="password"
