@@ -6,7 +6,8 @@ export interface CreateEventoDTO {
   descricao: string;
   dataInicio: string;
   dataFim: string;
-  tipoAvaliacao?: number[];
+  tipoAvaliacao?: number;
+  instituicaoId: number;
 }
 
 export interface UpdateEventoDTO {
@@ -15,7 +16,7 @@ export interface UpdateEventoDTO {
   descricao?: string;
   dataInicio?: string;
   dataFim?: string;
-  tipoAvaliacao?: number[];
+  tipoAvaliacao?: number;
 }
 
 export interface EventoFilterDTO {
@@ -47,23 +48,11 @@ class EventoService {
         banner: eventoData.banner,
         descricao: eventoData.descricao,
         data_inicio: eventoData.dataInicio,
-        data_fim: eventoData.dataFim
+        data_fim: eventoData.dataFim,
+        tipoavalicao_idtipo_avalicao: eventoData.tipoAvaliacao || 1, // Valor padrão 1 se não for fornecido
+        instituicao_idinstituicao: eventoData.instituicaoId
       },
     });
-
-    // Se houver tipos de avaliação, cria-os
-    if (eventoData.tipoAvaliacao && eventoData.tipoAvaliacao.length > 0) {
-      await Promise.all(
-        eventoData.tipoAvaliacao.map((tipoId) =>
-          prisma.tipoAvalicao.create({
-            data: {
-              nome: `Tipo ${tipoId}`, // Nome temporário, seria melhor receber o nome do tipo
-              evento_idevento: evento.idevento,
-            },
-          })
-        )
-      );
-    }
 
     // Retorna o evento
     return this.getEventoById(evento.idevento);
@@ -72,7 +61,7 @@ class EventoService {
   /**
    * Adiciona avaliadores a um evento
    * @param eventoId ID do evento
-   * @param avaliadoresIds IDs dos avaliadores
+   * @param avaliadoresData IDs dos avaliadores
    * @returns Evento atualizado com os avaliadores
    */
   async addAvaliadoresEvento(eventoId: number, avaliadoresData: AvaliadoresEventoDTO) {
@@ -139,7 +128,7 @@ class EventoService {
   /**
    * Remove avaliadores de um evento
    * @param eventoId ID do evento
-   * @param avaliadoresIds IDs dos avaliadores
+   * @param avaliadoresData IDs dos avaliadores
    * @returns Evento atualizado sem os avaliadores
    */
   async removeAvaliadoresEvento(eventoId: number, avaliadoresData: AvaliadoresEventoDTO) {
@@ -213,7 +202,7 @@ class EventoService {
             usuario: true,
           },
         },
-        tipo_avaliacoes: true,
+        tipoavalicao: true,
         checklists: {
           include: {
             perguntas: true,
@@ -234,14 +223,16 @@ class EventoService {
       descricao: evento.descricao,
       dataInicio: evento.data_inicio,
       dataFim: evento.data_fim,
+      tipoavalicao_idtipo_avalicao: evento.tipoavalicao_idtipo_avalicao,
+      instituicao_idinstituicao: evento.instituicao_idinstituicao,
       avaliadores: evento.avaliadores.map((avaliador) => ({
         usuarioIdusuario: avaliador.usuario_idusuario,
         nome: avaliador.usuario.nome,
       })),
-      tipoAvaliacao: evento.tipo_avaliacoes.map((tipo) => ({
-        idAvaliacao: tipo.idtipo_avalicao,
-        nomeAvaliacao: tipo.nome,
-      })),
+      tipoAvaliacao: {
+        idAvaliacao: evento.tipoavalicao.idtipo_avalicao,
+        nomeAvaliacao: evento.tipoavalicao.nome,
+      },
       checklists: evento.checklists.map((checklist) => ({
         idchecklistEvento: checklist.idchecklist_evento,
         perguntas: checklist.perguntas.map((pergunta) => ({
@@ -282,6 +273,7 @@ class EventoService {
             usuario: true,
           },
         },
+        tipoavalicao: true,
       },
     });
 
@@ -305,6 +297,12 @@ class EventoService {
         dataInicio: evento.data_inicio,
         dataFim: evento.data_fim,
         status: status, // Status determinado pela lógica
+        tipoavalicao_idtipo_avalicao: evento.tipoavalicao_idtipo_avalicao,
+        tipoAvaliacao: {
+          idAvaliacao: evento.tipoavalicao.idtipo_avalicao,
+          nomeAvaliacao: evento.tipoavalicao.nome,
+        },
+        instituicao_idinstituicao: evento.instituicao_idinstituicao,
         avaliadores: evento.avaliadores.map((avaliador) => ({
           usuarioIdusuario: avaliador.usuario_idusuario,
           nome: avaliador.usuario.nome,
@@ -368,33 +366,16 @@ class EventoService {
     if (eventoData.dataFim) {
       dadosAtualizacao.data_fim = eventoData.dataFim;
     }
+
+    if (eventoData.tipoAvaliacao) {
+      dadosAtualizacao.tipoavalicao_idtipo_avalicao = eventoData.tipoAvaliacao;
+    }
+
     // Atualiza o evento
     await prisma.evento.update({
       where: { idevento: eventoId },
       data: dadosAtualizacao,
     });
-
-    // Se houver tipos de avaliação, atualiza os tipos de avaliação do evento
-    if (eventoData.tipoAvaliacao) {
-      // Remove todos os tipos de avaliação atuais
-      await prisma.tipoAvalicao.deleteMany({
-        where: { evento_idevento: eventoId },
-      });
-
-      // Adiciona os novos tipos de avaliação
-      if (eventoData.tipoAvaliacao.length > 0) {
-        await Promise.all(
-          eventoData.tipoAvaliacao.map((tipoId) =>
-            prisma.tipoAvalicao.create({
-              data: {
-                nome: `Tipo ${tipoId}`, // Nome temporário
-                evento_idevento: eventoId,
-              },
-            })
-          )
-        );
-      }
-    }
 
     // Retorna o evento atualizado
     return this.getEventoById(eventoId);
@@ -418,10 +399,6 @@ class EventoService {
     await prisma.$transaction([
       // Exclui os avaliadores do evento
       prisma.eventoAvaliador.deleteMany({
-        where: { evento_idevento: eventoId },
-      }),
-      // Exclui os tipos de avaliação do evento
-      prisma.tipoAvalicao.deleteMany({
         where: { evento_idevento: eventoId },
       }),
       // Exclui as perguntas dos checklists do evento
@@ -490,7 +467,6 @@ class EventoService {
       })),
     };
   }
-
 }
 
 export default new EventoService();
