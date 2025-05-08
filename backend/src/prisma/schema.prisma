@@ -1,0 +1,194 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model StatusArtigo {
+  idstatus_artigo Int      @id @default(autoincrement())
+  descricao       String   @db.VarChar(45)
+  artigos         Artigo[]
+
+  @@map("status_artigo")
+}
+
+model Artigo {
+  idartigo                    Int             @id @default(autoincrement())
+  titulo                      String          @db.VarChar(45)
+  resumo                      String          @db.VarChar(45)
+  area_tematica               String          @db.VarChar(45)
+  status_artigo_idstatus_artigo Int
+  status_artigo               StatusArtigo    @relation(fields: [status_artigo_idstatus_artigo], references: [idstatus_artigo])
+  autores                     AutorArtigo[]
+  versoes                     VersaoArtigo[]
+  palavras_chave              PalavraArtigo[]
+
+  @@map("artigo")
+}
+
+model Usuario {
+  idusuario        Int             @id @default(autoincrement())
+  email            String          @db.VarChar(45) @unique
+  senha            String          @db.VarChar(255) // Aumentei para suportar senhas hashed
+  nome             String          @db.VarChar(45)
+  data_nascimento  String          @db.VarChar(45)
+  autoria          AutorArtigo[]
+  avaliacoes       Avaliacao[]
+  cargos           CargoUsuario[]
+  comentarios      Comentario[]
+  eventos_avaliador EventoAvaliador[]
+
+  @@map("usuario")
+}
+
+model AutorArtigo {
+  usuario_idusuario Int
+  artigo_idartigo  Int
+  usuario          Usuario @relation(fields: [usuario_idusuario], references: [idusuario])
+  artigo           Artigo  @relation(fields: [artigo_idartigo], references: [idartigo])
+
+  @@id([usuario_idusuario, artigo_idartigo])
+  @@map("autor_artigo")
+}
+
+model VersaoArtigo {
+  idversao_artigo  Int         @id @default(autoincrement())
+  versao           String      @db.VarChar(45)
+  data_cadastro    String      @db.VarChar(45)
+  artigo_idartigo  Int
+  caminho_pdf      String?     @db.VarChar(255) // Adicionei para salvar o caminho do PDF
+  artigo           Artigo      @relation(fields: [artigo_idartigo], references: [idartigo])
+  avaliacoes       Avaliacao[]
+  comentarios      Comentario[]
+  perguntas_artigo PerguntaArtigo[]
+
+  @@map("versao_artigo")
+}
+
+model Avaliacao {
+  idavaliacao                 Int          @id @default(autoincrement())
+  nota                        String       @db.VarChar(45)
+  observacao                  String       @db.VarChar(255) // Aumentei para suportar textos mais longos
+  data_avaliacao              String       @db.VarChar(45)
+  caminho_pdf                 String?      @db.VarChar(255) // Opcional para upload de avaliação
+  usuario_idusuario           Int
+  versao_artigo_idversao_artigo Int
+  usuario                     Usuario      @relation(fields: [usuario_idusuario], references: [idusuario])
+  versao_artigo               VersaoArtigo @relation(fields: [versao_artigo_idversao_artigo], references: [idversao_artigo])
+
+  @@map("avaliacao")
+}
+
+model Cargo {
+  idcargo         Int           @id @default(autoincrement())
+  nome            String        @db.VarChar(45)
+  usuarios        CargoUsuario[]
+
+  @@map("cargo")
+}
+
+model CargoUsuario {
+  cargo_idcargo    Int
+  usuario_idusuario Int
+  cargo            Cargo    @relation(fields: [cargo_idcargo], references: [idcargo])
+  usuario          Usuario  @relation(fields: [usuario_idusuario], references: [idusuario])
+
+  @@id([cargo_idcargo, usuario_idusuario])
+  @@map("cargo_usuario")
+}
+
+model Comentario {
+  idcomentario                Int          @id @default(autoincrement())
+  descricao                   String       @db.VarChar(255) // Aumentei para suportar textos mais longos
+  versao_artigo_idversao_artigo Int
+  usuario_idusuario           Int
+  versao_artigo               VersaoArtigo @relation(fields: [versao_artigo_idversao_artigo], references: [idversao_artigo])
+  usuario                     Usuario      @relation(fields: [usuario_idusuario], references: [idusuario])
+
+  @@map("comentario")
+}
+
+model StatusEvento {
+  idstatus_evento Int      @id @default(autoincrement())
+  descricao       String   @db.VarChar(45)
+  eventos         Evento[]
+
+  @@map("status_evento")
+}
+
+model Evento {
+  idevento                  Int               @id @default(autoincrement())
+  nome                      String            @db.VarChar(45)
+  banner                    String            @db.VarChar(255) // Aumentei para suportar URLs mais longas
+  descricao                 String            @db.VarChar(255) // Aumentei para suportar textos mais longos
+  data_inicio               String            @db.VarChar(45)
+  data_fim                  String            @db.VarChar(45)
+  status_evento_idstatus_evento Int
+  status_evento             StatusEvento      @relation(fields: [status_evento_idstatus_evento], references: [idstatus_evento])
+  tipo_avaliacoes           TipoAvalicao[]
+  checklists                ChecklistEvento[]
+  avaliadores               EventoAvaliador[]
+
+  @@map("evento")
+}
+
+model TipoAvalicao {
+  idtipo_avalicao Int    @id @default(autoincrement())
+  nome            String @db.VarChar(45)
+  evento_idevento Int
+  evento          Evento @relation(fields: [evento_idevento], references: [idevento])
+
+  @@map("tipo_avalicao")
+}
+
+model ChecklistEvento {
+  idchecklist_evento Int        @id @default(autoincrement())
+  evento_idevento    Int
+  evento             Evento     @relation(fields: [evento_idevento], references: [idevento])
+  perguntas          Pergunta[]
+
+  @@map("checklist_evento")
+}
+
+model Pergunta {
+  idpergunta                   Int               @id @default(autoincrement())
+  descricao                    String            @db.VarChar(255) // Aumentei para suportar textos mais longos
+  checklist_evento_idchecklist_evento Int
+  checklist_evento             ChecklistEvento   @relation(fields: [checklist_evento_idchecklist_evento], references: [idchecklist_evento])
+  pergunta_artigos             PerguntaArtigo[]
+
+  @@map("pergunta")
+}
+
+model PerguntaArtigo {
+  idpergunta_artigo            Int          @id @default(autoincrement())
+  checked                      String       @db.VarChar(45)
+  pergunta_idpergunta          Int
+  versao_artigo_idversao_artigo Int
+  pergunta                     Pergunta     @relation(fields: [pergunta_idpergunta], references: [idpergunta])
+  versao_artigo                VersaoArtigo @relation(fields: [versao_artigo_idversao_artigo], references: [idversao_artigo])
+
+  @@map("pergunta_artigo")
+}
+
+model EventoAvaliador {
+  evento_idevento   Int
+  usuario_idusuario Int
+  evento            Evento  @relation(fields: [evento_idevento], references: [idevento])
+  usuario           Usuario @relation(fields: [usuario_idusuario], references: [idusuario])
+
+  @@id([evento_idevento, usuario_idusuario])
+  @@map("evento_avaliador")
+}
+
+model PalavraArtigo {
+  idpalavra_artigo Int    @id @default(autoincrement())
+  nome             String @db.VarChar(45)
+  artigo_idartigo  Int
+  artigo           Artigo @relation(fields: [artigo_idartigo], references: [idartigo])
+
+  @@map("palavra_artigo")
+}
