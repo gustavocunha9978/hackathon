@@ -1,1 +1,0 @@
-export type IPermissionsType = 'user' | 'admin';
