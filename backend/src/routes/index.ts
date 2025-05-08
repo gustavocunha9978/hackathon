@@ -7,9 +7,11 @@ import avaliacaoRoutes from './avaliacao.routes';
 import comentarioRoutes from './comentario.routes';
 import publicacaoRoutes from './publicacao.routes';
 import checklistRoutes from './checklist.routes';
+import { analyzeRoutes } from "./analyze.routes";
 
 const router = Router();
 
+router.use("/pdf", analyzeRoutes); 
 // Rotas de autenticação
 router.use('/auth', authRoutes);
 
