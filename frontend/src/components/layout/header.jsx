@@ -1,13 +1,6 @@
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { 
-  LogOut, 
-  Menu, 
-  User, 
-  FileText, 
-  Calendar, 
-  Award
-} from 'lucide-react';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { LogOut, Menu, User, FileText, Calendar, Award } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,22 +8,27 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
 export function Header({ user, onMenuToggle }) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
-      <div className="container flex h-16 items-center justify-between">
+      <div className="container flex h-16 items-center justify-between px-5">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={onMenuToggle} className="md:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onMenuToggle}
+            className="md:hidden"
+          >
             <Menu className="h-5 w-5" />
           </Button>
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-bold">HackSubmit</span>
+            <img src="/public/submita-logo.png" alt="submita logo" />
           </Link>
         </div>
-        
-        <nav className="hidden md:flex items-center gap-6">
+
+        {/* <nav className="hidden md:flex items-center gap-6">
           <Link href="/eventos" className="text-sm font-medium hover:text-primary">
             Eventos
           </Link>
@@ -41,7 +39,7 @@ export function Header({ user, onMenuToggle }) {
               </Link>
             </>
           )}
-        </nav>
+        </nav> */}
 
         <div className="flex items-center gap-4">
           {user ? (
@@ -66,7 +64,7 @@ export function Header({ user, onMenuToggle }) {
                   <Calendar className="mr-2 h-4 w-4" />
                   <span>Eventos</span>
                 </DropdownMenuItem>
-                {user.role === 'avaliador' && (
+                {user.role === "avaliador" && (
                   <DropdownMenuItem>
                     <Award className="mr-2 h-4 w-4" />
                     <span>Avaliações</span>
