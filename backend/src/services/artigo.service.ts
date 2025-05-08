@@ -202,10 +202,6 @@ class ArtigoService {
       };
     }
 
-    if (filtros?.areaTematica) {
-      where.area_tematica = filtros.areaTematica;
-    }
-
     if (filtros?.autor) {
       where.autores = {
         some: {
@@ -213,18 +209,6 @@ class ArtigoService {
         },
       };
     }
-
-    if (filtros?.palavraChave) {
-      where.palavras_chave = {
-        some: {
-          nome: {
-            contains: filtros.palavraChave,
-            mode: 'insensitive',
-          },
-        },
-      };
-    }
-
     if (filtros?.status) {
       where.status_artigo_idstatus_artigo = filtros.status;
     }

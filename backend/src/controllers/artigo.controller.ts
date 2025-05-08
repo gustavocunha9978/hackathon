@@ -82,12 +82,6 @@ class ArtigoController {
         });
       }
 
-      // Se for avaliador mas não coordenador, remove informações de autoria
-      if (isAvaliador && !isCoordenador && !isAutor) {
-        // Sistema double-blind: remove identificação de autores
-        delete artigo.autores;
-      }
-
       return res.status(200).json(artigo);
     } catch (error) {
       if (error instanceof Error) {
@@ -110,9 +104,7 @@ class ArtigoController {
       const { evento, areaTematica, autor, palavraChave, status } = req.query;
       const artigos = await artigoService.getAllArtigos({
         evento: evento ? Number(evento) : undefined,
-        areaTematica: areaTematica ? String(areaTematica) : undefined,
         autor: autor ? Number(autor) : undefined,
-        palavraChave: palavraChave ? String(palavraChave) : undefined,
         status: status ? Number(status) : undefined,
       });
 
@@ -173,7 +165,7 @@ class ArtigoController {
       
       // Sistema double-blind: remove identificação de autores
       const artigosSemAutores = artigos.map((artigo) => {
-        const { autores, ...artigoSemAutores } = artigo;
+        const { autores = [], ...artigoSemAutores } = artigo as { autores?: any[] };
         return artigoSemAutores;
       });
       

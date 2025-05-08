@@ -34,7 +34,7 @@ export default function AutorDashboard() {
         setArtigos(artigosData);
 
         // Busca eventos ativos
-        const eventosData = await getEventos();
+        const eventosData = await getEventos(userData?.user.institutionId);
         const eventosAtivos = eventosData.filter(
           (evento) => evento.status === "ativo"
         );
