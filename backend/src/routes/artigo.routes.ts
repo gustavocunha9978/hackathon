@@ -20,7 +20,7 @@ router.post(
     body('resumo').notEmpty().withMessage('Resumo é obrigatório'),
     body('areaTematica').notEmpty().withMessage('Área temática é obrigatória'),
     body('evento').isInt().withMessage('Evento é obrigatório'),
-    body('autoresIds').notEmpty().withMessage('Autores são obrigatorios.'),
+    body('autoresIds').optional(),
     body('palavrasChave').optional(),
   ],
   artigoController.createArtigo

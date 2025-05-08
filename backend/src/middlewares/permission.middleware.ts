@@ -12,7 +12,6 @@ export enum Cargo {
  */
 export const checkCargo = (cargosPermitidos: number[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    return next();
     // Verifica se o usuário está autenticado
     if (!req.user) {
       return res.status(401).json({ error: true, message: 'Usuário não autenticado' });
