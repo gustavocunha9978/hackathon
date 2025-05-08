@@ -40,6 +40,8 @@ model Usuario {
   cargos            CargoUsuario[]
   comentarios       Comentario[]
   eventos_avaliador EventoAvaliador[]
+  instituicao_idinstituicao             Int
+  instituicao                       Instituicao      @relation(fields: [instituicao_idinstituicao], references: [idinstituicao])
 
   @@map("usuario")
 }
@@ -66,6 +68,15 @@ model VersaoArtigo {
   perguntas_artigo PerguntaArtigo[]
 
   @@map("versao_artigo")
+}
+
+model Instituicao {
+  idinstituicao                   Int          @id @default(autoincrement())
+  nome                          String       @db.VarChar(200)
+  prefixo_email                    String       @db.VarChar(100) // Aumentei para suportar textos mais longos
+  eventos     Evento[]
+  usuarios     Usuario[]
+  @@map("instituicao")
 }
 
 model Avaliacao {
@@ -121,6 +132,8 @@ model Evento {
   tipo_avaliacoes TipoAvalicao[]
   checklists      ChecklistEvento[]
   avaliadores     EventoAvaliador[]
+  instituicao_idinstituicao  Int
+  instituicao           Instituicao           @relation(fields: [instituicao_idinstituicao], references: [idinstituicao])
 
   @@map("evento")
 }
