@@ -31,14 +31,13 @@ class EventoController {
       }
 
       // Cria o evento
-      const { nome, descricao, dataInicio, dataFim, statusEventoId, tipoAvaliacao } = req.body;
+      const { nome, descricao, dataInicio, dataFim, tipoAvaliacao } = req.body;
       const evento = await eventoService.createEvento({
         nome,
         banner: bannerPath,
         descricao,
         dataInicio,
         dataFim,
-        statusEventoId: Number(statusEventoId),
         tipoAvaliacao: tipoAvaliacao ? JSON.parse(tipoAvaliacao) : undefined,
       });
 
@@ -236,14 +235,13 @@ class EventoController {
       }
 
       // Atualiza o evento
-      const { nome, descricao, dataInicio, dataFim, statusEventoId, tipoAvaliacao } = req.body;
+      const { nome, descricao, dataInicio, dataFim, tipoAvaliacao } = req.body;
       const evento = await eventoService.updateEvento(Number(id), {
         nome,
         banner: bannerPath,
         descricao,
         dataInicio,
         dataFim,
-        statusEventoId: statusEventoId ? Number(statusEventoId) : undefined,
         tipoAvaliacao: tipoAvaliacao ? JSON.parse(tipoAvaliacao) : undefined,
       });
 
@@ -331,6 +329,7 @@ class EventoController {
    * @param req Requisição
    * @param res Resposta
    */
+  /*
   async getAllStatusEvento(req: Request, res: Response): Promise<Response> {
     try {
       const statusEventos = await eventoService.getAllStatusEvento();
@@ -342,6 +341,7 @@ class EventoController {
       return ResponseHandler.error(res, 'Erro interno do servidor');
     }
   }
+    */
 }
 
 export default new EventoController();

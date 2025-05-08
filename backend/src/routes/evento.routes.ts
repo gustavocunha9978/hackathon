@@ -20,7 +20,6 @@ router.post(
     body('descricao').notEmpty().withMessage('Descrição é obrigatória'),
     body('dataInicio').notEmpty().withMessage('Data de início é obrigatória'),
     body('dataFim').notEmpty().withMessage('Data de fim é obrigatória'),
-    body('statusEventoId').isInt().withMessage('Status do evento é obrigatório'),
   ],
   eventoController.createEvento
 );
@@ -67,7 +66,6 @@ router.put(
     body('descricao').optional().notEmpty().withMessage('Descrição não pode ser vazia'),
     body('dataInicio').optional().isString().withMessage('Data de início deve ser uma string'),
     body('dataFim').optional().isString().withMessage('Data de fim deve ser uma string'),
-    body('statusEventoId').optional().isInt().withMessage('Status do evento deve ser um número inteiro'),
   ],
   eventoController.updateEvento
 );
@@ -148,6 +146,5 @@ router.post(
  * @desc Busca todos os status de evento
  * @access Public
  */
-router.get('/status-eventos', eventoController.getAllStatusEvento);
 
 export default router;

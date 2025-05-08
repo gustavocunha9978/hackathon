@@ -46,17 +46,6 @@ router.get('/status-artigos', (req, res) => {
   return res.status(200).json(statusArtigos);
 });
 
-router.get('/status-eventos', (req, res) => {
-  const statusEventos = [
-    { idstatusEvento: 1, descricao: 'Em Preparação' },
-    { idstatusEvento: 2, descricao: 'Submissões Abertas' },
-    { idstatusEvento: 3, descricao: 'Em Avaliação' },
-    { idstatusEvento: 4, descricao: 'Finalizado' },
-  ];
-  
-  return res.status(200).json(statusEventos);
-});
-
 router.get('/cargos', (req, res) => {
   const cargos = [
     { idcargo: 1, nome: 'Coordenador' },

@@ -6,7 +6,6 @@ export interface CreateEventoDTO {
   descricao: string;
   dataInicio: string;
   dataFim: string;
-  statusEventoId: number;
   tipoAvaliacao?: number[];
 }
 
@@ -16,7 +15,6 @@ export interface UpdateEventoDTO {
   descricao?: string;
   dataInicio?: string;
   dataFim?: string;
-  statusEventoId?: number;
   tipoAvaliacao?: number[];
 }
 
@@ -49,8 +47,7 @@ class EventoService {
         banner: eventoData.banner,
         descricao: eventoData.descricao,
         data_inicio: eventoData.dataInicio,
-        data_fim: eventoData.dataFim,
-        status_evento_idstatus_evento: eventoData.statusEventoId,
+        data_fim: eventoData.dataFim
       },
     });
 
@@ -211,7 +208,6 @@ class EventoService {
     const evento = await prisma.evento.findUnique({
       where: { idevento: eventoId },
       include: {
-        status_evento: true,
         avaliadores: {
           include: {
             usuario: true,
@@ -238,10 +234,6 @@ class EventoService {
       descricao: evento.descricao,
       dataInicio: evento.data_inicio,
       dataFim: evento.data_fim,
-      statusEvento: {
-        idstatusEvento: evento.status_evento.idstatus_evento,
-        descricao: evento.status_evento.descricao,
-      },
       avaliadores: evento.avaliadores.map((avaliador) => ({
         usuarioIdusuario: avaliador.usuario_idusuario,
         nome: avaliador.usuario.nome,
@@ -269,10 +261,6 @@ class EventoService {
     // Prepara os filtros
     const where: any = {};
 
-    if (filtros?.status) {
-      where.status_evento_idstatus_evento = filtros.status;
-    }
-
     if (filtros?.dataInicio) {
       where.data_inicio = {
         gte: filtros.dataInicio,
@@ -289,7 +277,6 @@ class EventoService {
     const eventos = await prisma.evento.findMany({
       where,
       include: {
-        status_evento: true,
         avaliadores: {
           include: {
             usuario: true,
@@ -306,10 +293,6 @@ class EventoService {
       descricao: evento.descricao,
       dataInicio: evento.data_inicio,
       dataFim: evento.data_fim,
-      statusEvento: {
-        idstatusEvento: evento.status_evento.idstatus_evento,
-        descricao: evento.status_evento.descricao,
-      },
       avaliadores: evento.avaliadores.map((avaliador) => ({
         usuarioIdusuario: avaliador.usuario_idusuario,
         nome: avaliador.usuario.nome,
@@ -372,11 +355,6 @@ class EventoService {
     if (eventoData.dataFim) {
       dadosAtualizacao.data_fim = eventoData.dataFim;
     }
-
-    if (eventoData.statusEventoId) {
-      dadosAtualizacao.status_evento_idstatus_evento = eventoData.statusEventoId;
-    }
-
     // Atualiza o evento
     await prisma.evento.update({
       where: { idevento: eventoId },
@@ -500,17 +478,6 @@ class EventoService {
     };
   }
 
-  /**
-   * Busca todos os status de evento
-   * @returns Lista de status de evento
-   */
-  async getAllStatusEvento() {
-    const statusEventos = await prisma.statusEvento.findMany();
-    return statusEventos.map((status) => ({
-      idstatusEvento: status.idstatus_evento,
-      descricao: status.descricao,
-    }));
-  }
 }
 
 export default new EventoService();
