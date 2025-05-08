@@ -17,20 +17,23 @@ if [ $? -ne 0 ]; then
   mc mb $MINIO_ALIAS/$MINIO_BUCKET
 fi
 
-echo "👀 Aguardando novos PDFs na pasta '$UPLOAD_DIR'..."
+echo "👀 Aguardando novos arquivos na pasta '$UPLOAD_DIR'..."
 
 inotifywait -m -e close_write --format '%w%f' "$UPLOAD_DIR" | while read file; do
+  [ -e "$file" ] || continue  # ignora se foi removido no meio do processo
+
+  filename=$(basename "$file")
+  echo "📥 Novo arquivo detectado: $filename"
+
+  echo "🔁 Enviando $filename para MinIO..."
+  mc cp "$file" $MINIO_ALIAS/$MINIO_BUCKET/
+
+  # Se for PDF, envia para IA
   if [[ "$file" == *.pdf ]]; then
-    filename=$(basename "$file")
-    echo "📥 Novo arquivo detectado: $filename"
-
-    echo "🔁 Enviando $filename para MinIO..."
-    mc cp "$file" $MINIO_ALIAS/$MINIO_BUCKET/
-
-    echo "🤖 Enviando para IA para análise..."
+    echo "🤖 Enviando $filename para IA para análise..."
     curl -s -X POST "$API_ANALYZE_URL" -F "file=@$file" | jq
-
-    echo "✅ Processado: $filename"
-    echo "------------------------------------------"
   fi
+
+  echo "✅ Processado: $filename"
+  echo "------------------------------------------"
 done
