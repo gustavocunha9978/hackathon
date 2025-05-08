@@ -285,21 +285,33 @@ class EventoService {
       },
     });
 
-    // Formata os dados dos eventos
-    return eventos.map((evento) => ({
-      idevento: evento.idevento,
+// Formata os dados dos eventos
+  return eventos.map((evento) => {
+    // Lógica para determinar o status do evento
+    const currentDate = new Date();
+    let status = 'planejado'; // Status padrão (planejado)
+
+    if (new Date(evento.data_inicio) <= currentDate && new Date(evento.data_fim) >= currentDate) {
+      status = 'ativo'; // Se a data de início passou e a data de fim não chegou, é 'ativo'
+    } else if (new Date(evento.data_fim) < currentDate) {
+      status = 'finalizado'; // Se a data de fim já passou, é 'finalizado'
+    }
+
+    return {
+      id: evento.idevento,
       nome: evento.nome,
       banner: evento.banner,
       descricao: evento.descricao,
-      dataInicio: evento.data_inicio,
-      dataFim: evento.data_fim,
+      data_inicio: evento.data_inicio,
+      data_fim: evento.data_fim,
+      status: status, // Status determinado pela lógica
       avaliadores: evento.avaliadores.map((avaliador) => ({
         usuarioIdusuario: avaliador.usuario_idusuario,
         nome: avaliador.usuario.nome,
       })),
-    }));
-  }
-
+    };
+  });
+}
   /**
    * Atualiza um evento
    * @param eventoId ID do evento

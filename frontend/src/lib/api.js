@@ -1,9 +1,42 @@
 // Arquivo para simular chamadas de API
+import api from "../services/api";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Eventos
-export async function getEventos() {
+export async function getEventos(institutionId = null) {
+  if (institutionId) {
+    // Código para quando a API estiver disponível
+    /*
+    try {
+      const response = await api.get(`/eventos/${institutionId}/eventos`);
+
+      if (response && response.data) {
+        console.log("Eventos recebidos:", response.data);
+        return response.data;
+      } else {
+        console.error("Erro ao receber dados dos eventos:", response);
+        return [];
+      }
+    } catch (error) {
+      console.error("Falha ao buscar eventos da instituição:", error);
+      return [];
+    }
+    */
+  }
+  /*
+  const fetchData = async () => {
+    const responseData = await api.get("/eventos");
+
+    if (responseData && responseData.data) {
+      console.log("Dados recebidos:", responseData.data);
+    } else {
+      console.error("Erro ao receber dados:", responseData);
+    }
+  };
+  const result = fetchData();
+  if (result.lenght <= 0) {
+  */
   await delay(500);
   return [
     {
@@ -44,6 +77,9 @@ export async function getEventos() {
       status: "encerrado",
     },
   ];
+  /* }
+  return result;
+  */
 }
 
 export async function getEvento(id) {
@@ -52,7 +88,24 @@ export async function getEvento(id) {
 }
 
 // Artigos
-export async function getArtigos(userId = null) {
+export async function getArtigos(autorId) {
+  // Código para quando a API estiver disponível
+  /*
+  try {
+    const response = await api.get(`/usuarios/${Number(autorId)}/artigos`);
+
+    if (response && response.data) {
+      console.log("Artigos do autor recebidos:", response.data);
+      return response.data;
+    } else {
+      console.error("Erro ao receber dados dos artigos:", response);
+      return [];
+    }
+  } catch (error) {
+    console.error("Falha ao buscar artigos do autor:", error);
+    return [];
+  }
+  */
   await delay(500);
   const artigos = [
     {

@@ -2,12 +2,7 @@ import axios from 'axios';
 
 // Cria uma instância do Axios com configurações padrão
 const api = axios.create({
-  baseURL: 'https://api.exemplo.com', // Substitua pela URL base da sua API
-  headers: {
-    'Content-Type': 'application/json',
-    // Caso precise de um token de autenticação, pode ser adicionado aqui
-    // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-  },
+  baseURL: 'http://localhost:3001/api', // Substitua pela URL base da sua API
 });
 
 // Interceptador para tratamento global de erros de resposta
