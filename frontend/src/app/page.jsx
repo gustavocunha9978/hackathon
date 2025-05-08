@@ -17,12 +17,9 @@ export default async function HomePage() {
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-primaryBiopark to-primary py-20 text-white">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-              Submita
-            </h1>
-            <p className="mt-6 text-xl max-w-3xl mx-auto">
+            <h5 className="text-2xl font-bold tracking-tight sm:text-2xl md:text-2xl">
               Plataforma de submissão, avaliação e publicação de artigos
-            </p>
+            </h5>
             <div className="mt-10 flex flex-wrap justify-center gap-4">
               <Button
                 size="lg"
