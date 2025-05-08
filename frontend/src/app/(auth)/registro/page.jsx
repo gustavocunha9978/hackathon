@@ -1,25 +1,32 @@
-'use client'
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { createUsuario, login } from '@/lib/auth';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
+"use client";
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { usuarioStore } from "@/lib/localStorage";
 
 export default function RegistroPage() {
   const [formData, setFormData] = useState({
-    nome: '',
-    email: '',
-    senha: '',
-    confirmarSenha: '',
-    dataNascimento: ''
+    nome: "",
+    email: "",
+    senha: "",
+    confirmarSenha: "",
+    dataNascimento: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const handleChange = (e) => {
@@ -30,29 +37,49 @@ export default function RegistroPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     // Validação simples
     if (formData.senha !== formData.confirmarSenha) {
-      setError('As senhas não coincidem');
+      setError("As senhas não coincidem");
+      setIsLoading(false);
+      return;
+    }
+
+    if (formData.senha.length < 6) {
+      setError("A senha deve ter pelo menos 6 caracteres");
       setIsLoading(false);
       return;
     }
 
     try {
-      // Simula a criação de usuário e login
-      await createUsuario({
+      // Criar novo usuário usando o helper do localStorage
+      const novoUsuario = usuarioStore.create({
         nome: formData.nome,
         email: formData.email,
+        senha: formData.senha,
         data_nascimento: formData.dataNascimento,
-        cargos: ['autor'] // Por padrão, todos os novos usuários são autores
+        cargos: ["autor"], // Por padrão, todos os novos usuários são autores
       });
-      
+
       // Auto login após registro
-      await login(formData.email, formData.senha);
-      router.push('/autor'); // Redireciona para o dashboard de autor
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: novoUsuario.id,
+          name: novoUsuario.nome,
+          email: novoUsuario.email,
+          role: "autor",
+        })
+      );
+      localStorage.setItem("token", "token-simulado");
+
+      // Redirecionar para a dashboard de autor
+      router.push("/autor");
     } catch (err) {
-      setError('Erro ao criar conta. Por favor, tente novamente.');
+      setError(
+        err.message || "Erro ao criar conta. Por favor, tente novamente."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -61,7 +88,7 @@ export default function RegistroPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      
+
       <main className="flex-1 flex items-center justify-center p-4">
         <Card className="mx-auto max-w-md w-full">
           <CardHeader className="space-y-1">
@@ -135,10 +162,10 @@ export default function RegistroPage() {
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Criando Conta...' : 'Cadastrar'}
+                {isLoading ? "Criando Conta..." : "Cadastrar"}
               </Button>
               <div className="text-center text-sm">
-                Já possui uma conta?{' '}
+                Já possui uma conta?{" "}
                 <Link href="/login" className="text-primary hover:underline">
                   Entrar
                 </Link>
@@ -147,7 +174,7 @@ export default function RegistroPage() {
           </form>
         </Card>
       </main>
-      
+
       <Footer />
     </div>
   );
