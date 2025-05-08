@@ -45,34 +45,3 @@ export const createPostgresConnection = new DataSource({
 createPostgresConnection
   .initialize()
   .then(() => console.log('Conexão com Postgres Iniciada'));
-
-export const createMongoConnection = new DataSource({
-  name: process.env.DB_MONGO_NAME,
-  url: process.env.DB_MONGO_URL,
-  type: 'mongodb',
-  host: process.env.DB_MONGO_HOST,
-  port: Number(process.env.DB_MONGO_PORT),
-  username: process.env.DB_MONGO_USER,
-  password: process.env.DB_MONGO_PASS,
-  database: process.env.DB_MONGO_DATABASE,
-  useUnifiedTopology: true,
-  entities: [
-    path.join(
-      __dirname,
-      process.env.NODE_ENV === 'development' ? 'src' : 'dist',
-      '../',
-      '../',
-      '../',
-      'containers',
-      'LogsProvider',
-      'implementations',
-      'typeorm',
-      'schemas',
-      process.env.NODE_ENV === 'development' ? '*.ts' : '*.js',
-    ),
-  ],
-});
-
-createMongoConnection
-  .initialize()
-  .then(() => console.log('Conexão com MongoDB Iniciada'));
