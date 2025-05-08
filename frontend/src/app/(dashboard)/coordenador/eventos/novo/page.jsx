@@ -14,13 +14,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { ArrowLeft, Calendar, CheckCircle, AlertTriangle } from 'lucide-react';
 
 export default function NovoEventoPage() {
@@ -184,24 +177,6 @@ export default function NovoEventoPage() {
                   />
                 </div>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="status">Status *</Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}
-                disabled={isSubmitting}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="planejado">Planejado</SelectItem>
-                  <SelectItem value="ativo">Ativo</SelectItem>
-                  <SelectItem value="encerrado">Encerrado</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
 
             <div className="space-y-2">

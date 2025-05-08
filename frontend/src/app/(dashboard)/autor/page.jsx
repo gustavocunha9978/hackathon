@@ -52,13 +52,13 @@ export default function AutorDashboard() {
   // Filtra artigos por status para os widgets
   const artigosEmAvaliacao = artigos.filter(
     (artigo) =>
-      artigo.status === "submetido" || artigo.status === "aguardando_correcao"
+      artigo.status === "aguardando_correcao"
   );
   const artigosAprovados = artigos.filter(
     (artigo) => artigo.status === "aprovado" || artigo.status === "publicado"
   );
   const artigosRevisao = artigos.filter(
-    (artigo) => artigo.status === "revisao"
+    (artigo) => artigo.status === "reprovado"
   );
 
   return (
@@ -124,7 +124,7 @@ export default function AutorDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Revisões</CardTitle>
+            <CardTitle className="text-sm font-medium">Reprovados</CardTitle>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"

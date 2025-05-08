@@ -198,7 +198,7 @@ export default function EditarArtigoPage() {
   }
 
   // Verifica se o artigo pode ser editado (somente se estiver Aguardando correção ou recém submetido)
-  const podeEditar = artigo && ["submetido", "revisao"].includes(artigo.status);
+  const podeEditar = artigo && ["aguardando_correcao"].includes(artigo.status);
 
   if (!podeEditar) {
     return (

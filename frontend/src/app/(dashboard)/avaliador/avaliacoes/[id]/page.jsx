@@ -46,6 +46,7 @@ export default function AvaliacaoDetalhePage() {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [checklistProgress, setChecklistProgress] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -109,6 +110,19 @@ export default function AvaliacaoDetalhePage() {
       fetchData();
     }
   }, [params.id]);
+
+  useEffect(() => {
+    if (checklist) {
+      const perguntasObrigatorias = checklist.perguntas.filter(p => p.obrigatoria).length;
+      const perguntasRespondidasObrigatorias = checklist.perguntas
+        .filter(p => p.obrigatoria)
+        .filter(p => respostas[p.id] !== undefined)
+        .length;
+      
+      const porcentagem = Math.round((perguntasRespondidasObrigatorias / perguntasObrigatorias) * 100);
+      setChecklistProgress(porcentagem);
+    }
+  }, [respostas, checklist]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -602,6 +616,8 @@ export default function AvaliacaoDetalhePage() {
           </CardContent>
         </Card>
       )}
+
+      
     </div>
   );
 }

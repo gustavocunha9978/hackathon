@@ -29,7 +29,7 @@ const authorRoutes = [
   },
   {
     title: "Eventos",
-    href: "/eventos",
+    href: "/autor/eventos",
     icon: Calendar,
   },
 ];
@@ -47,7 +47,7 @@ const reviewerRoutes = [
   },
   {
     title: "Eventos",
-    href: "/eventos",
+    href: "/avaliador/eventos",
     icon: Calendar,
   },
 ];
