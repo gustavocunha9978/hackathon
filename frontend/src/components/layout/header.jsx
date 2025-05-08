@@ -14,7 +14,7 @@ import Image from "next/image";
 export function Header({ user, onMenuToggle }) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
-      <div className="container flex h-16 items-center justify-between px-5">
+      <div className="container flex h-16 items-center justify-between pr-5">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
@@ -28,8 +28,8 @@ export function Header({ user, onMenuToggle }) {
             <Image
               src="/submita-logo.png"
               alt="submita logo"
-              width={150}
-              height={50}
+              width={200}
+              height={100}
             />
           </Link>
         </div>

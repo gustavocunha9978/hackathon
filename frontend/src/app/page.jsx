@@ -44,7 +44,7 @@ export default async function HomePage() {
         </section>
 
         {/* Eventos em Destaque */}
-        <section className="py-16">
+        <section className="py-16 px-10">
           <div className="container mx-auto px-4">
             <div className="mb-10 text-center">
               <h2 className="text-3xl font-bold">Eventos em Destaque</h2>
@@ -82,8 +82,7 @@ export default async function HomePage() {
             <div className="mb-10 text-center">
               <h2 className="text-3xl font-bold">Como Funciona</h2>
               <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-                Entenda o processo de submissão e avaliação de artigos na nossa
-                plataforma.
+                Entenda o processo de submissão e avaliação de artigos
               </p>
             </div>
 
@@ -94,8 +93,9 @@ export default async function HomePage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Submissão</h3>
                 <p className="text-muted-foreground">
-                  Cadastre-se na plataforma, escolha um evento ativo e submeta
-                  seu artigo científico seguindo as diretrizes.
+                  Cadastre-se na plataforma com o email de sua instituição,
+                  escolha um evento ativo e submeta seu artigo científico
+                  seguindo as diretrizes.
                 </p>
               </div>
 
@@ -105,8 +105,8 @@ export default async function HomePage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Avaliação</h3>
                 <p className="text-muted-foreground">
-                  Seu artigo será avaliado por especialistas de forma anônima
-                  (double-blind), garantindo imparcialidade.
+                  Seu artigo será avaliado de maneira anônima (double-blind),
+                  assegurando total imparcialidade no processo.
                 </p>
               </div>
 
@@ -131,8 +131,8 @@ export default async function HomePage() {
               Pronto para Submeter seu Artigo?
             </h2>
             <p className="mt-4 max-w-2xl mx-auto">
-              Participe dos eventos científicos da Faculdade Biopark e contribua
-              com suas pesquisas.
+              Participe dos eventos científicos de sua faculdade e contribua com
+              suas pesquisas.
             </p>
             <div className="mt-8">
               <Button
