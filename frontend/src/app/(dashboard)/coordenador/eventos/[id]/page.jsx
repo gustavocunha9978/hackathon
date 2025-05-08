@@ -13,7 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getEvento, getArtigos } from "@/lib/api";
+import { getEvento, getArtigos, getChecklists } from "@/lib/api";
 import { formatDate, formatStatus, getStatusColor } from "@/lib/utils";
 import {
   Calendar,
@@ -28,21 +28,44 @@ import {
   UserPlus,
   Mail,
   Plus,
+  ListChecks,
+  Eye,
+  X,
+  Save,
 } from "lucide-react";
 import Link from "next/link";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 export default function EventoDetalhesPage() {
   const params = useParams();
   const router = useRouter();
 
   const [evento, setEvento] = useState(null);
+
   const [artigos, setArtigos] = useState([]);
+
+  const [eventChecklists, setEventChecklists] = useState([]);
+  const [isLoadingChecklists, setIsLoadingChecklists] = useState(true);
+  const [defaultChecklistId, setDefaultChecklistId] = useState("");
+  const [requireMinComments, setRequireMinComments] = useState(false);
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState({ show: false, id: null });
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
+      setIsLoadingChecklists(true);
       try {
         // Busca os detalhes do evento
         const eventoData = await getEvento(params.id);
@@ -57,6 +80,18 @@ export default function EventoDetalhesPage() {
             (artigo) => artigo.evento_id === parseInt(params.id)
           );
           setArtigos(artigosDoEvento);
+
+          // Busca checklists associados ao evento
+          setIsLoadingChecklists(true);
+          const checklistsData = await getChecklists(params.id);
+          setEventChecklists(checklistsData);
+
+          // Se houver checklists, define o primeiro como padrão (simula uma configuração existente)
+          if (checklistsData.length > 0) {
+            setDefaultChecklistId(String(checklistsData[0].id));
+          }
+
+          setIsLoadingChecklists(false);
         }
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
@@ -70,6 +105,64 @@ export default function EventoDetalhesPage() {
       fetchData();
     }
   }, [params.id]);
+
+  const handleRemoveChecklist = (checklistId) => {
+    setConfirmDelete({ show: true, id: checklistId });
+  };
+
+  const confirmRemoveChecklist = async () => {
+    if (!confirmDelete.id) return;
+
+    try {
+      await deleteChecklist(confirmDelete.id);
+
+      // Atualiza a lista de checklists removendo o excluído
+      setEventChecklists((prev) =>
+        prev.filter((checklist) => checklist.id !== confirmDelete.id)
+      );
+
+      // Se o checklist excluído era o padrão, atualiza a seleção
+      if (parseInt(defaultChecklistId) === confirmDelete.id) {
+        const remaining = eventChecklists.filter(
+          (c) => c.id !== confirmDelete.id
+        );
+        setDefaultChecklistId(
+          remaining.length > 0 ? String(remaining[0].id) : ""
+        );
+      }
+
+      // Fecha o diálogo de confirmação
+      setConfirmDelete({ show: false, id: null });
+    } catch (error) {
+      console.error("Erro ao excluir checklist:", error);
+    }
+  };
+
+  const saveEvaluationSettings = async () => {
+    setIsSavingSettings(true);
+    try {
+      // Simulação de salvamento das configurações
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      // Em uma implementação real, enviaríamos para o backend:
+      // - ID do checklist padrão (defaultChecklistId)
+      // - Configuração de comentários mínimos (requireMinComments)
+
+      // Feedback de sucesso
+      toast({
+        title: "Configurações salvas",
+        description:
+          "As configurações de avaliação foram atualizadas com sucesso.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Erro ao salvar configurações:", error);
+    } finally {
+      setIsSavingSettings(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -281,7 +374,7 @@ export default function EventoDetalhesPage() {
         <TabsList>
           <TabsTrigger value="artigos">Artigos</TabsTrigger>
           <TabsTrigger value="avaliadores">Avaliadores</TabsTrigger>
-          <TabsTrigger value="checklist">Checklist</TabsTrigger>
+          <TabsTrigger value="checklists">Checklist</TabsTrigger>
           <TabsTrigger value="estatisticas">Estatísticas</TabsTrigger>
         </TabsList>
 
@@ -353,30 +446,214 @@ export default function EventoDetalhesPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="checklist">
+        <TabsContent value="checklists" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Checklist de Avaliação</CardTitle>
-              <CardDescription>
-                Defina os critérios de avaliação para este evento
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Checklists de Avaliação</CardTitle>
+                  <CardDescription>
+                    Defina os critérios de avaliação para artigos deste evento
+                  </CardDescription>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" asChild>
+                    <Link
+                      href={`/coordenador/eventos/${evento?.id}/associar-checklists`}
+                    >
+                      <ListChecks className="mr-2 h-4 w-4" />
+                      Associar Checklists
+                    </Link>
+                  </Button>
+                  <Button asChild>
+                    <Link
+                      href={`/coordenador/checklists/novo?evento=${evento?.id}`}
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Criar Checklist
+                    </Link>
+                  </Button>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-4">
-                <p className="text-muted-foreground mb-4">
-                  Ainda não há checklist definido para este evento.
-                </p>
-                <Button asChild>
-                  <Link
-                    href={`/coordenador/checklists/novo?evento=${evento.id}`}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Criar Checklist
-                  </Link>
-                </Button>
-              </div>
+              {isLoadingChecklists ? (
+                <div className="text-center py-8">
+                  <ListChecks className="h-12 w-12 mx-auto mb-4 animate-pulse text-muted-foreground" />
+                  <p>Carregando checklists...</p>
+                </div>
+              ) : eventChecklists.length > 0 ? (
+                <div className="space-y-4">
+                  {eventChecklists.map((checklist) => (
+                    <Card key={checklist.id} className="bg-secondary/20">
+                      <CardContent className="p-4">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                          <div>
+                            <h4 className="font-semibold text-lg">
+                              {checklist.nome}
+                            </h4>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <span>
+                                {checklist.perguntas.length} perguntas
+                              </span>
+                              <span className="mx-1">•</span>
+                              <span>
+                                Atualizado em{" "}
+                                {formatDate(checklist.ultima_atualizacao)}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button variant="outline" size="sm" asChild>
+                              <Link
+                                href={`/coordenador/checklists/${checklist.id}`}
+                              >
+                                <Eye className="mr-2 h-4 w-4" />
+                                Visualizar
+                              </Link>
+                            </Button>
+                            <Button variant="outline" size="sm" asChild>
+                              <Link
+                                href={`/coordenador/checklists/${checklist.id}/editar`}
+                              >
+                                <Edit className="mr-2 h-4 w-4" />
+                                Editar
+                              </Link>
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() =>
+                                handleRemoveChecklist(checklist.id)
+                              }
+                            >
+                              <X className="mr-2 h-4 w-4" />
+                              Remover
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-muted rounded-lg p-8 text-center">
+                  <ListChecks className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                  <h3 className="text-lg font-semibold mb-2">
+                    Nenhum Checklist Associado
+                  </h3>
+                  <p className="text-muted-foreground max-w-md mx-auto mb-6">
+                    Este evento ainda não possui checklists de avaliação.
+                    Associe checklists existentes ou crie novos para definir
+                    critérios de avaliação.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <Button variant="outline" asChild>
+                      <Link
+                        href={`/coordenador/eventos/${evento?.id}/associar-checklists`}
+                      >
+                        <ListChecks className="mr-2 h-4 w-4" />
+                        Associar Checklists
+                      </Link>
+                    </Button>
+                    <Button asChild>
+                      <Link
+                        href={`/coordenador/checklists/novo?evento=${evento?.id}`}
+                      >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Criar Checklist
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
+
+          {eventChecklists.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Configuração de Avaliação</CardTitle>
+                <CardDescription>
+                  Defina como os checklists serão aplicados nas avaliações
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="default-checklist">Checklist Padrão</Label>
+                  <Select
+                    value={defaultChecklistId}
+                    onValueChange={setDefaultChecklistId}
+                  >
+                    <SelectTrigger id="default-checklist">
+                      <SelectValue placeholder="Selecione um checklist padrão" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {eventChecklists.map((checklist) => (
+                        <SelectItem
+                          key={checklist.id}
+                          value={String(checklist.id)}
+                        >
+                          {checklist.nome}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm text-muted-foreground">
+                    Este checklist será usado por padrão para todas as
+                    avaliações deste evento.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 mt-4">
+                  <Switch
+                    id="require-min-comments"
+                    checked={requireMinComments}
+                    onCheckedChange={setRequireMinComments}
+                  />
+                  <Label
+                    htmlFor="require-min-comments"
+                    className="cursor-pointer"
+                  >
+                    Exigir tamanho mínimo para comentários
+                  </Label>
+                </div>
+
+                <div className="flex justify-end mt-4">
+                  <Button
+                    onClick={saveEvaluationSettings}
+                    disabled={isSavingSettings}
+                  >
+                    {isSavingSettings ? (
+                      <>
+                        <span className="animate-spin mr-2">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path>
+                          </svg>
+                        </span>
+                        Salvando...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="mr-2 h-4 w-4" />
+                        Salvar Configurações
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="estatisticas">
