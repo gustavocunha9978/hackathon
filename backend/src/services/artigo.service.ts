@@ -48,33 +48,33 @@ class ArtigoService {
 
     // Adiciona os autores
     await Promise.all(
-      artigoData.autoresIds.map((autorId) =>
+      artigoData.autoresIds.map(autorId =>
         prisma.autorArtigo.create({
           data: {
             usuario_idusuario: autorId,
             artigo_idartigo: artigo.idartigo,
           },
-        })
-      )
+        }),
+      ),
     );
 
     // Adiciona as palavras-chave
     await Promise.all(
-      artigoData.palavrasChave.map((palavra) =>
+      artigoData.palavrasChave.map(palavra =>
         prisma.palavraArtigo.create({
           data: {
             nome: palavra,
             artigo_idartigo: artigo.idartigo,
           },
-        })
-      )
+        }),
+      ),
     );
 
     // Cria a primeira versão do artigo
     const dataAtual = new Date().toISOString();
     await prisma.versaoArtigo.create({
       data: {
-        versao: "1.0",
+        versao: '1.0',
         data_cadastro: dataAtual,
         caminho_pdf: artigoData.caminhoPdf,
         artigo_idartigo: artigo.idartigo,
@@ -140,12 +140,12 @@ class ArtigoService {
         id: artigo.status_artigo.idstatus_artigo,
         descricao: artigo.status_artigo.descricao,
       },
-      versoes: artigo.versoes.map((versao) => ({
+      versoes: artigo.versoes.map(versao => ({
         idversaoArtigo: versao.idversao_artigo,
         versao: versao.versao,
         dataCadastro: versao.data_cadastro,
         caminhoPdf: versao.caminho_pdf,
-        avaliacoes: versao.avaliacoes.map((avaliacao) => ({
+        avaliacoes: versao.avaliacoes.map(avaliacao => ({
           idavaliacao: avaliacao.idavaliacao,
           nota: avaliacao.nota,
           observacao: avaliacao.observacao,
@@ -155,7 +155,7 @@ class ArtigoService {
             nome: avaliacao.usuario.nome,
           },
         })),
-        comentarios: versao.comentarios.map((comentario) => ({
+        comentarios: versao.comentarios.map(comentario => ({
           idcomentario: comentario.idcomentario,
           descricao: comentario.descricao,
           usuario: {
@@ -163,7 +163,7 @@ class ArtigoService {
             nome: comentario.usuario.nome,
           },
         })),
-        perguntas: versao.perguntas_artigo.map((pergunta) => ({
+        perguntas: versao.perguntas_artigo.map(pergunta => ({
           idperguntaArtigo: pergunta.idpergunta_artigo,
           checked: pergunta.checked,
           pergunta: {
@@ -172,13 +172,13 @@ class ArtigoService {
           },
         })),
       })),
-      autores: artigo.autores.map((autor) => ({
+      autores: artigo.autores.map(autor => ({
         usuario: {
           idusuario: autor.usuario.idusuario,
           nome: autor.usuario.nome,
         },
       })),
-      palavrasChave: artigo.palavras_chave.map((palavra) => ({
+      palavrasChave: artigo.palavras_chave.map(palavra => ({
         idpalavraArtigo: palavra.idpalavra_artigo,
         nome: palavra.nome,
       })),
@@ -250,7 +250,7 @@ class ArtigoService {
     });
 
     // Formata os dados dos artigos
-    return artigos.map((artigo) => ({
+    return artigos.map(artigo => ({
       idartigo: artigo.idartigo,
       titulo: artigo.titulo,
       resumo: artigo.resumo,
@@ -259,18 +259,21 @@ class ArtigoService {
         id: artigo.status_artigo.idstatus_artigo,
         descricao: artigo.status_artigo.descricao,
       },
-      ultimaVersao: artigo.versoes.length > 0 ? {
-        idversaoArtigo: artigo.versoes[0].idversao_artigo,
-        versao: artigo.versoes[0].versao,
-        dataCadastro: artigo.versoes[0].data_cadastro,
-      } : null,
-      autores: artigo.autores.map((autor) => ({
+      ultimaVersao:
+        artigo.versoes.length > 0
+          ? {
+              idversaoArtigo: artigo.versoes[0].idversao_artigo,
+              versao: artigo.versoes[0].versao,
+              dataCadastro: artigo.versoes[0].data_cadastro,
+            }
+          : null,
+      autores: artigo.autores.map(autor => ({
         usuario: {
           idusuario: autor.usuario.idusuario,
           nome: autor.usuario.nome,
         },
       })),
-      palavrasChave: artigo.palavras_chave.map((palavra) => ({
+      palavrasChave: artigo.palavras_chave.map(palavra => ({
         idpalavraArtigo: palavra.idpalavra_artigo,
         nome: palavra.nome,
       })),
@@ -314,7 +317,7 @@ class ArtigoService {
     });
 
     // Formata os dados dos artigos
-    return artigos.map((artigo) => ({
+    return artigos.map(artigo => ({
       idartigo: artigo.idartigo,
       titulo: artigo.titulo,
       resumo: artigo.resumo,
@@ -323,18 +326,21 @@ class ArtigoService {
         id: artigo.status_artigo.idstatus_artigo,
         descricao: artigo.status_artigo.descricao,
       },
-      ultimaVersao: artigo.versoes.length > 0 ? {
-        idversaoArtigo: artigo.versoes[0].idversao_artigo,
-        versao: artigo.versoes[0].versao,
-        dataCadastro: artigo.versoes[0].data_cadastro,
-        avaliacoes: artigo.versoes[0].avaliacoes.map((avaliacao) => ({
-          idavaliacao: avaliacao.idavaliacao,
-          nota: avaliacao.nota,
-          observacao: avaliacao.observacao,
-          dataAvaliacao: avaliacao.data_avaliacao,
-        })),
-      } : null,
-      palavrasChave: artigo.palavras_chave.map((palavra) => ({
+      ultimaVersao:
+        artigo.versoes.length > 0
+          ? {
+              idversaoArtigo: artigo.versoes[0].idversao_artigo,
+              versao: artigo.versoes[0].versao,
+              dataCadastro: artigo.versoes[0].data_cadastro,
+              avaliacoes: artigo.versoes[0].avaliacoes.map(avaliacao => ({
+                idavaliacao: avaliacao.idavaliacao,
+                nota: avaliacao.nota,
+                observacao: avaliacao.observacao,
+                dataAvaliacao: avaliacao.data_avaliacao,
+              })),
+            }
+          : null,
+      palavrasChave: artigo.palavras_chave.map(palavra => ({
         idpalavraArtigo: palavra.idpalavra_artigo,
         nome: palavra.nome,
       })),
@@ -357,7 +363,7 @@ class ArtigoService {
       },
     });
 
-    const eventosIds = eventosAvaliador.map((ea) => ea.evento_idevento);
+    const eventosIds = eventosAvaliador.map(ea => ea.evento_idevento);
 
     // Busca artigos que estão em eventos para os quais o usuário é avaliador
     // e que ainda não foram avaliados por ele
@@ -395,7 +401,7 @@ class ArtigoService {
     });
 
     // Formata os dados dos artigos
-    return artigos.map((artigo) => ({
+    return artigos.map(artigo => ({
       idartigo: artigo.idartigo,
       titulo: artigo.titulo,
       resumo: artigo.resumo,
@@ -404,12 +410,15 @@ class ArtigoService {
         id: artigo.status_artigo.idstatus_artigo,
         descricao: artigo.status_artigo.descricao,
       },
-      ultimaVersao: artigo.versoes.length > 0 ? {
-        idversaoArtigo: artigo.versoes[0].idversao_artigo,
-        versao: artigo.versoes[0].versao,
-        dataCadastro: artigo.versoes[0].data_cadastro,
-      } : null,
-      palavrasChave: artigo.palavras_chave.map((palavra) => ({
+      ultimaVersao:
+        artigo.versoes.length > 0
+          ? {
+              idversaoArtigo: artigo.versoes[0].idversao_artigo,
+              versao: artigo.versoes[0].versao,
+              dataCadastro: artigo.versoes[0].data_cadastro,
+            }
+          : null,
+      palavrasChave: artigo.palavras_chave.map(palavra => ({
         idpalavraArtigo: palavra.idpalavra_artigo,
         nome: palavra.nome,
       })),
@@ -482,13 +491,15 @@ class ArtigoService {
       throw new Error('Artigo não encontrado');
     }
 
-    // Verifica se o artigo está em status que permite nova versão (2 - Em Revisão)
+    // Verifica se o artigo está em status que permite nova versão (2 - Aguardando correção)
     if (artigo.status_artigo_idstatus_artigo !== 2) {
-      throw new Error('O artigo não está em status que permite envio de nova versão');
+      throw new Error(
+        'O artigo não está em status que permite envio de nova versão',
+      );
     }
 
     // Calcula o número da nova versão
-    let novoNumeroVersao = "1.0";
+    let novoNumeroVersao = '1.0';
     if (artigo.versoes.length > 0) {
       const versaoAtual = artigo.versoes[0].versao;
       const partes = versaoAtual.split('.');
@@ -569,14 +580,14 @@ class ArtigoService {
       // Adiciona os novos autores
       if (artigoData.autoresIds.length > 0) {
         await Promise.all(
-          artigoData.autoresIds.map((autorId) =>
+          artigoData.autoresIds.map(autorId =>
             prisma.autorArtigo.create({
               data: {
                 usuario_idusuario: autorId,
                 artigo_idartigo: artigoId,
               },
-            })
-          )
+            }),
+          ),
         );
       }
     }
@@ -591,14 +602,14 @@ class ArtigoService {
       // Adiciona as novas palavras-chave
       if (artigoData.palavrasChave.length > 0) {
         await Promise.all(
-          artigoData.palavrasChave.map((palavra) =>
+          artigoData.palavrasChave.map(palavra =>
             prisma.palavraArtigo.create({
               data: {
                 nome: palavra,
                 artigo_idartigo: artigoId,
               },
-            })
-          )
+            }),
+          ),
         );
       }
     }
@@ -613,7 +624,7 @@ class ArtigoService {
    */
   async getAllStatusArtigo() {
     const statusArtigos = await prisma.statusArtigo.findMany();
-    return statusArtigos.map((status) => ({
+    return statusArtigos.map(status => ({
       idstatusArtigo: status.idstatus_artigo,
       descricao: status.descricao,
     }));

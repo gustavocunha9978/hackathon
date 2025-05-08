@@ -57,7 +57,7 @@ export default function DetalheArtigoPage() {
     }
   }, [params.id]);
 
-  // Verifica se o artigo pode ser editado (somente se estiver em revisão ou recém submetido)
+  // Verifica se o artigo pode ser editado (somente se estiver Aguardando correção ou recém submetido)
   const podeEditar = artigo && ["submetido", "revisao"].includes(artigo.status);
 
   if (isLoading) {

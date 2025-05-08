@@ -71,7 +71,7 @@ export async function getArtigos(userId = null) {
       titulo: "Sustentabilidade na Produção Agrícola",
       resumo: "Análise de métodos sustentáveis para produção agrícola...",
       area_tematica: "Agricultura e Meio Ambiente",
-      status: "em_revisao",
+      status: "aguardando_correcao",
       autores: [
         { id: 1, nome: "João Silva" },
         { id: 3, nome: "Carlos Mendes" },

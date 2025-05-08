@@ -94,8 +94,10 @@ export default function GerenciarArtigosPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="todos">Todos</SelectItem>
-            <SelectItem value="submetido">Em análise</SelectItem>
-            <SelectItem value="em_revisao">Em revisão</SelectItem>
+            <SelectItem value="submetido">Aguardando avaliação</SelectItem>
+            <SelectItem value="aguardando_correcao">
+              Aguardando correção
+            </SelectItem>
             <SelectItem value="aprovado">Aprovado</SelectItem>
             <SelectItem value="reprovado">Reprovado</SelectItem>
           </SelectContent>

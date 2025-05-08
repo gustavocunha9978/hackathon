@@ -312,10 +312,10 @@ export default function ArtigoDetalhesPage() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="submetido">
-                              Em análise
+                              Aguardando avaliação
                             </SelectItem>
-                            <SelectItem value="em_revisao">
-                              Em revisão
+                            <SelectItem value="aguardando_correcao">
+                              Aguardando correção
                             </SelectItem>
                             <SelectItem value="aprovado">Aprovado</SelectItem>
                             <SelectItem value="reprovado">Reprovado</SelectItem>

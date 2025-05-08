@@ -38,11 +38,11 @@ router.use('/publicacoes', publicacaoRoutes);
 router.get('/status-artigos', (req, res) => {
   const statusArtigos = [
     { idstatusArtigo: 1, descricao: 'Em Avaliação' },
-    { idstatusArtigo: 2, descricao: 'Em Revisão' },
+    { idstatusArtigo: 2, descricao: 'Aguardando correção' },
     { idstatusArtigo: 3, descricao: 'Aprovado' },
     { idstatusArtigo: 4, descricao: 'Reprovado' },
   ];
-  
+
   return res.status(200).json(statusArtigos);
 });
 
@@ -52,7 +52,7 @@ router.get('/cargos', (req, res) => {
     { idcargo: 2, nome: 'Avaliador' },
     { idcargo: 3, nome: 'Autor' },
   ];
-  
+
   return res.status(200).json(cargos);
 });
 

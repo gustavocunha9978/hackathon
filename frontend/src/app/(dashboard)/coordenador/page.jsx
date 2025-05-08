@@ -68,7 +68,8 @@ export default function CoordenadorDashboard() {
 
   // Contagem de artigos por status
   const artigosEmAvaliacao = artigos.filter(
-    (artigo) => artigo.status === "submetido" || artigo.status === "em_revisao"
+    (artigo) =>
+      artigo.status === "submetido" || artigo.status === "aguardando_correcao"
   ).length;
   const artigosAprovados = artigos.filter(
     (artigo) => artigo.status === "aprovado" || artigo.status === "publicado"
@@ -174,7 +175,7 @@ export default function CoordenadorDashboard() {
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium flex items-center">
                   <Clock className="mr-2 h-4 w-4 text-yellow-500" />
-                  Em revisão
+                  Aguardando correção
                 </CardTitle>
               </CardHeader>
               <CardContent>

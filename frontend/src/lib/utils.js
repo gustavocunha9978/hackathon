@@ -30,8 +30,8 @@ export function formatDate(date) {
  */
 export function formatStatus(status) {
   const statusMap = {
-    submetido: "Em análise",
-    em_revisao: "Em revisão",
+    submetido: "Aguardando avaliação",
+    aguardando_correcao: "Aguardando correção",
     aprovado: "Aprovado",
     reprovado: "Reprovado",
     revisao: "Revisão solicitada",
@@ -48,7 +48,7 @@ export function formatStatus(status) {
 export function getStatusColor(status) {
   const colorMap = {
     submetido: "bg-blue-100 text-blue-800",
-    em_revisao: "bg-yellow-100 text-yellow-800",
+    aguardando_correcao: "bg-yellow-100 text-yellow-800",
     aprovado: "bg-green-100 text-green-800",
     reprovado: "bg-red-100 text-red-800",
     revisao: "bg-purple-100 text-purple-800",
