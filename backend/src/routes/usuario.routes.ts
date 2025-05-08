@@ -31,8 +31,6 @@ router.post(
 router.get(
   '/',
   [
-    authenticate,
-    isCoordenador,
     query('cargo').optional().isInt().withMessage('Cargo deve ser um número inteiro'),
   ],
   usuarioController.getAllUsuarios
@@ -46,7 +44,6 @@ router.get(
 router.get(
   '/:id',
   [
-    authenticate,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
   ],
   usuarioController.getUsuarioById
@@ -60,7 +57,6 @@ router.get(
 router.put(
   '/:id',
   [
-    authenticate,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
     body('email').optional().isEmail().withMessage('Email inválido'),
     body('senha').optional().isLength({ min: 6 }).withMessage('A senha deve ter pelo menos 6 caracteres'),
@@ -79,8 +75,6 @@ router.put(
 router.delete(
   '/:id',
   [
-    authenticate,
-    isCoordenador,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
   ],
   usuarioController.deleteUsuario

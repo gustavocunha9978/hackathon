@@ -13,7 +13,6 @@ const router = Router();
 router.post(
   '/versoes/:id/comentarios',
   [
-    authenticate,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
     body('descricao').notEmpty().withMessage('Descrição é obrigatória'),
   ],
@@ -28,7 +27,6 @@ router.post(
 router.get(
   '/versoes/:id/comentarios',
   [
-    authenticate,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
   ],
   comentarioController.getComentariosByVersaoArtigo

@@ -14,8 +14,6 @@ const router = Router();
 router.post(
   '/eventos/:eventoId/checklists',
   [
-    authenticate,
-    isCoordenador,
     param('eventoId').isInt().withMessage('ID do evento deve ser um número inteiro'),
     body('perguntas').isArray().withMessage('Perguntas deve ser um array'),
     body('perguntas.*.descricao').notEmpty().withMessage('Descrição da pergunta é obrigatória'),
@@ -31,7 +29,6 @@ router.post(
 router.get(
   '/checklists/:id',
   [
-    authenticate,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
   ],
   checklistController.getChecklistById
@@ -45,7 +42,6 @@ router.get(
 router.get(
   '/eventos/:eventoId/checklists',
   [
-    authenticate,
     param('eventoId').isInt().withMessage('ID do evento deve ser um número inteiro'),
   ],
   checklistController.getChecklistByEventoId
@@ -59,8 +55,6 @@ router.get(
 router.put(
   '/checklists/:id',
   [
-    authenticate,
-    isCoordenador,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
     body('perguntas').isArray().withMessage('Perguntas deve ser um array'),
     body('perguntas.*.descricao').notEmpty().withMessage('Descrição da pergunta é obrigatória'),
@@ -76,8 +70,6 @@ router.put(
 router.post(
   '/checklists/:checklistId/perguntas',
   [
-    authenticate,
-    isCoordenador,
     param('checklistId').isInt().withMessage('ID do checklist deve ser um número inteiro'),
     body('descricao').notEmpty().withMessage('Descrição da pergunta é obrigatória'),
   ],
@@ -92,8 +84,6 @@ router.post(
 router.put(
   '/perguntas/:perguntaId',
   [
-    authenticate,
-    isCoordenador,
     param('perguntaId').isInt().withMessage('ID da pergunta deve ser um número inteiro'),
     body('descricao').notEmpty().withMessage('Descrição da pergunta é obrigatória'),
   ],
@@ -108,8 +98,6 @@ router.put(
 router.delete(
   '/perguntas/:perguntaId',
   [
-    authenticate,
-    isCoordenador,
     param('perguntaId').isInt().withMessage('ID da pergunta deve ser um número inteiro'),
   ],
   checklistController.deletePergunta
@@ -123,8 +111,6 @@ router.delete(
 router.delete(
   '/checklists/:id',
   [
-    authenticate,
-    isCoordenador,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
   ],
   checklistController.deleteChecklist

@@ -15,8 +15,6 @@ const router = Router();
 router.post(
   '/',
   [
-    authenticate,
-    isCoordenador,
     uploadBanner,
     body('nome').notEmpty().withMessage('Nome é obrigatório'),
     body('descricao').notEmpty().withMessage('Descrição é obrigatória'),
@@ -63,8 +61,6 @@ router.get(
 router.put(
   '/:id',
   [
-    authenticate,
-    isCoordenador,
     uploadBanner,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
     body('nome').optional().notEmpty().withMessage('Nome não pode ser vazio'),
@@ -84,8 +80,6 @@ router.put(
 router.delete(
   '/:id',
   [
-    authenticate,
-    isCoordenador,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
   ],
   eventoController.deleteEvento
@@ -99,8 +93,6 @@ router.delete(
 router.post(
   '/:id/avaliadores',
   [
-    authenticate,
-    isCoordenador,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
     body('avaliadoresIds').isArray().withMessage('avaliadoresIds deve ser um array'),
     body('avaliadoresIds.*').isInt().withMessage('IDs dos avaliadores devem ser números inteiros'),
@@ -116,8 +108,6 @@ router.post(
 router.delete(
   '/:id/avaliadores',
   [
-    authenticate,
-    isCoordenador,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
     body('avaliadoresIds').isArray().withMessage('avaliadoresIds deve ser um array'),
     body('avaliadoresIds.*').isInt().withMessage('IDs dos avaliadores devem ser números inteiros'),
@@ -133,7 +123,6 @@ router.delete(
 router.get(
   '/:id/avaliadores',
   [
-    authenticate,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
   ],
   eventoController.getAvaliadoresEvento
@@ -147,8 +136,6 @@ router.get(
 router.post(
   '/:id/checklist',
   [
-    authenticate,
-    isCoordenador,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
     body('perguntas').isArray().withMessage('Perguntas deve ser um array'),
     body('perguntas.*.descricao').notEmpty().withMessage('Descrição da pergunta é obrigatória'),

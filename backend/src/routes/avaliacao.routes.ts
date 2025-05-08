@@ -15,7 +15,6 @@ const router = Router();
 router.post(
   '/versoes/:id/avaliacoes',
   [
-    authenticate,
     isAvaliador,
     uploadArtigoPdf,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
@@ -33,7 +32,6 @@ router.post(
 router.get(
   '/artigos/:id/avaliacoes',
   [
-    authenticate,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
   ],
   avaliacaoController.getAvaliacoesByArtigo
@@ -47,7 +45,6 @@ router.get(
 router.post(
   '/versoes/:id/perguntas',
   [
-    authenticate,
     isAvaliador,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
     body('perguntas').isArray().withMessage('Perguntas deve ser um array'),
