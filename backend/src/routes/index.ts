@@ -6,6 +6,7 @@ import artigoRoutes from './artigo.routes';
 import avaliacaoRoutes from './avaliacao.routes';
 import comentarioRoutes from './comentario.routes';
 import publicacaoRoutes from './publicacao.routes';
+import checklistRoutes from './checklist.routes';
 
 const router = Router();
 
@@ -17,6 +18,9 @@ router.use('/usuarios', usuarioRoutes);
 
 // Rotas de eventos
 router.use('/eventos', eventoRoutes);
+
+// Rotas de checklists
+router.use('/', checklistRoutes);
 
 // Rotas de artigos
 router.use('/artigos', artigoRoutes);

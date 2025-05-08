@@ -7,7 +7,6 @@ export interface CreateEventoDTO {
   dataInicio: string;
   dataFim: string;
   statusEventoId: number;
-  avaliadoresIds?: number[];
   tipoAvaliacao?: number[];
 }
 
@@ -18,7 +17,6 @@ export interface UpdateEventoDTO {
   dataInicio?: string;
   dataFim?: string;
   statusEventoId?: number;
-  avaliadoresIds?: number[];
   tipoAvaliacao?: number[];
 }
 
@@ -26,6 +24,10 @@ export interface EventoFilterDTO {
   status?: number;
   dataInicio?: string;
   dataFim?: string;
+}
+
+export interface AvaliadoresEventoDTO {
+  avaliadoresIds: number[];
 }
 
 class EventoService {
@@ -52,20 +54,6 @@ class EventoService {
       },
     });
 
-    // Se houver avaliadores, associa-os ao evento
-    if (eventoData.avaliadoresIds && eventoData.avaliadoresIds.length > 0) {
-      await Promise.all(
-        eventoData.avaliadoresIds.map((avaliadorId) =>
-          prisma.eventoAvaliador.create({
-            data: {
-              evento_idevento: evento.idevento,
-              usuario_idusuario: avaliadorId,
-            },
-          })
-        )
-      );
-    }
-
     // Se houver tipos de avaliação, cria-os
     if (eventoData.tipoAvaliacao && eventoData.tipoAvaliacao.length > 0) {
       await Promise.all(
@@ -80,8 +68,138 @@ class EventoService {
       );
     }
 
-    // Retorna o evento com seus avaliadores
+    // Retorna o evento
     return this.getEventoById(evento.idevento);
+  }
+
+  /**
+   * Adiciona avaliadores a um evento
+   * @param eventoId ID do evento
+   * @param avaliadoresIds IDs dos avaliadores
+   * @returns Evento atualizado com os avaliadores
+   */
+  async addAvaliadoresEvento(eventoId: number, avaliadoresData: AvaliadoresEventoDTO) {
+    // Verifica se o evento existe
+    const eventoExistente = await prisma.evento.findUnique({
+      where: { idevento: eventoId },
+    });
+
+    if (!eventoExistente) {
+      throw new Error('Evento não encontrado');
+    }
+
+    // Para cada avaliador, verifica se já está vinculado ao evento
+    const avaliadoresPromises = avaliadoresData.avaliadoresIds.map(async (avaliadorId) => {
+      const avaliadorExistente = await prisma.eventoAvaliador.findFirst({
+        where: {
+          evento_idevento: eventoId,
+          usuario_idusuario: avaliadorId,
+        },
+      });
+
+      // Se o avaliador já estiver vinculado, pula
+      if (!avaliadorExistente) {
+        // Verifica se o usuário existe
+        const usuarioExistente = await prisma.usuario.findUnique({
+          where: { idusuario: avaliadorId },
+        });
+
+        if (!usuarioExistente) {
+          throw new Error(`Usuário com ID ${avaliadorId} não encontrado`);
+        }
+
+        // Verifica se o usuário tem cargo de avaliador (2) ou coordenador (1)
+        const temCargoAvaliador = await prisma.cargoUsuario.findFirst({
+          where: {
+            usuario_idusuario: avaliadorId,
+            OR: [
+              { cargo_idcargo: 1 }, // Coordenador
+              { cargo_idcargo: 2 }, // Avaliador
+            ],
+          },
+        });
+
+        if (!temCargoAvaliador) {
+          throw new Error(`Usuário com ID ${avaliadorId} não tem permissão de avaliador`);
+        }
+
+        // Adiciona o avaliador ao evento
+        return prisma.eventoAvaliador.create({
+          data: {
+            evento_idevento: eventoId,
+            usuario_idusuario: avaliadorId,
+          },
+        });
+      }
+    });
+
+    await Promise.all(avaliadoresPromises);
+
+    // Retorna o evento atualizado
+    return this.getEventoById(eventoId);
+  }
+
+  /**
+   * Remove avaliadores de um evento
+   * @param eventoId ID do evento
+   * @param avaliadoresIds IDs dos avaliadores
+   * @returns Evento atualizado sem os avaliadores
+   */
+  async removeAvaliadoresEvento(eventoId: number, avaliadoresData: AvaliadoresEventoDTO) {
+    // Verifica se o evento existe
+    const eventoExistente = await prisma.evento.findUnique({
+      where: { idevento: eventoId },
+    });
+
+    if (!eventoExistente) {
+      throw new Error('Evento não encontrado');
+    }
+
+    // Remove cada avaliador do evento
+    const avaliadoresPromises = avaliadoresData.avaliadoresIds.map(async (avaliadorId) => {
+      return prisma.eventoAvaliador.deleteMany({
+        where: {
+          evento_idevento: eventoId,
+          usuario_idusuario: avaliadorId,
+        },
+      });
+    });
+
+    await Promise.all(avaliadoresPromises);
+
+    // Retorna o evento atualizado
+    return this.getEventoById(eventoId);
+  }
+
+  /**
+   * Obtém os avaliadores de um evento
+   * @param eventoId ID do evento
+   * @returns Lista de avaliadores do evento
+   */
+  async getAvaliadoresEvento(eventoId: number) {
+    // Verifica se o evento existe
+    const eventoExistente = await prisma.evento.findUnique({
+      where: { idevento: eventoId },
+    });
+
+    if (!eventoExistente) {
+      throw new Error('Evento não encontrado');
+    }
+
+    // Busca os avaliadores do evento
+    const avaliadores = await prisma.eventoAvaliador.findMany({
+      where: { evento_idevento: eventoId },
+      include: {
+        usuario: true,
+      },
+    });
+
+    // Formata os dados dos avaliadores
+    return avaliadores.map((avaliador) => ({
+      idusuario: avaliador.usuario_idusuario,
+      nome: avaliador.usuario.nome,
+      email: avaliador.usuario.email,
+    }));
   }
 
   /**
@@ -264,28 +382,6 @@ class EventoService {
       where: { idevento: eventoId },
       data: dadosAtualizacao,
     });
-
-    // Se houver avaliadores, atualiza os avaliadores do evento
-    if (eventoData.avaliadoresIds) {
-      // Remove todos os avaliadores atuais
-      await prisma.eventoAvaliador.deleteMany({
-        where: { evento_idevento: eventoId },
-      });
-
-      // Adiciona os novos avaliadores
-      if (eventoData.avaliadoresIds.length > 0) {
-        await Promise.all(
-          eventoData.avaliadoresIds.map((avaliadorId) =>
-            prisma.eventoAvaliador.create({
-              data: {
-                evento_idevento: eventoId,
-                usuario_idusuario: avaliadorId,
-              },
-            })
-          )
-        );
-      }
-    }
 
     // Se houver tipos de avaliação, atualiza os tipos de avaliação do evento
     if (eventoData.tipoAvaliacao) {

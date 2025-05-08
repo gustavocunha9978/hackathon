@@ -4,6 +4,7 @@ import eventoService from '../services/evento.service';
 import path from 'path';
 import fs from 'fs';
 import { config } from '../config/env';
+import { ResponseHandler } from '../utils/response.handler';
 
 class EventoController {
   /**
@@ -16,7 +17,7 @@ class EventoController {
       // Validação dos campos
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return ResponseHandler.validationError(res, errors.array());
       }
 
       // Se houver arquivo de banner, salva o caminho
@@ -26,11 +27,11 @@ class EventoController {
       } else if (req.body.banner) {
         bannerPath = req.body.banner;
       } else {
-        return res.status(400).json({ error: true, message: 'Banner é obrigatório' });
+        return ResponseHandler.error(res, 'Banner é obrigatório', 400);
       }
 
       // Cria o evento
-      const { nome, descricao, dataInicio, dataFim, statusEventoId, avaliadoresIds, tipoAvaliacao } = req.body;
+      const { nome, descricao, dataInicio, dataFim, statusEventoId, tipoAvaliacao } = req.body;
       const evento = await eventoService.createEvento({
         nome,
         banner: bannerPath,
@@ -38,19 +39,119 @@ class EventoController {
         dataInicio,
         dataFim,
         statusEventoId: Number(statusEventoId),
-        avaliadoresIds: avaliadoresIds ? JSON.parse(avaliadoresIds) : undefined,
         tipoAvaliacao: tipoAvaliacao ? JSON.parse(tipoAvaliacao) : undefined,
       });
 
-      return res.status(201).json(evento);
+      return ResponseHandler.success(res, evento, 201);
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === 'A data de início deve ser anterior à data de fim') {
-          return res.status(400).json({ error: true, message: error.message });
+          return ResponseHandler.error(res, error.message, 400);
         }
-        return res.status(500).json({ error: true, message: error.message });
+        return ResponseHandler.error(res, error.message);
       }
-      return res.status(500).json({ error: true, message: 'Erro interno do servidor' });
+      return ResponseHandler.error(res, 'Erro interno do servidor');
+    }
+  }
+
+  /**
+   * Adiciona avaliadores a um evento
+   * @param req Requisição
+   * @param res Resposta
+   */
+  async addAvaliadoresEvento(req: Request, res: Response): Promise<Response> {
+    try {
+      // Validação dos campos
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return ResponseHandler.validationError(res, errors.array());
+      }
+
+      const { id } = req.params;
+      const { avaliadoresIds } = req.body;
+      
+      // Adiciona os avaliadores ao evento
+      const evento = await eventoService.addAvaliadoresEvento(Number(id), {
+        avaliadoresIds,
+      });
+
+      return ResponseHandler.successWithMessage(
+        res, 
+        evento, 
+        'Avaliadores adicionados com sucesso',
+        200
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === 'Evento não encontrado') {
+          return ResponseHandler.notFound(res, error.message);
+        }
+        if (error.message.includes('não encontrado') || error.message.includes('não tem permissão')) {
+          return ResponseHandler.error(res, error.message, 400);
+        }
+        return ResponseHandler.error(res, error.message);
+      }
+      return ResponseHandler.error(res, 'Erro interno do servidor');
+    }
+  }
+
+  /**
+   * Remove avaliadores de um evento
+   * @param req Requisição
+   * @param res Resposta
+   */
+  async removeAvaliadoresEvento(req: Request, res: Response): Promise<Response> {
+    try {
+      // Validação dos campos
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return ResponseHandler.validationError(res, errors.array());
+      }
+
+      const { id } = req.params;
+      const { avaliadoresIds } = req.body;
+      
+      // Remove os avaliadores do evento
+      const evento = await eventoService.removeAvaliadoresEvento(Number(id), {
+        avaliadoresIds,
+      });
+
+      return ResponseHandler.successWithMessage(
+        res, 
+        evento, 
+        'Avaliadores removidos com sucesso',
+        200
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === 'Evento não encontrado') {
+          return ResponseHandler.notFound(res, error.message);
+        }
+        return ResponseHandler.error(res, error.message);
+      }
+      return ResponseHandler.error(res, 'Erro interno do servidor');
+    }
+  }
+
+  /**
+   * Obtém os avaliadores de um evento
+   * @param req Requisição
+   * @param res Resposta
+   */
+  async getAvaliadoresEvento(req: Request, res: Response): Promise<Response> {
+    try {
+      const { id } = req.params;
+      const avaliadores = await eventoService.getAvaliadoresEvento(Number(id));
+
+      return ResponseHandler.success(res, avaliadores);
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === 'Evento não encontrado') {
+          return ResponseHandler.notFound(res, error.message);
+        }
+        return ResponseHandler.error(res, error.message);
+      }
+      return ResponseHandler.error(res, 'Erro interno do servidor');
     }
   }
 
@@ -64,15 +165,15 @@ class EventoController {
       const { id } = req.params;
       const evento = await eventoService.getEventoById(Number(id));
 
-      return res.status(200).json(evento);
+      return ResponseHandler.success(res, evento);
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === 'Evento não encontrado') {
-          return res.status(404).json({ error: true, message: error.message });
+          return ResponseHandler.notFound(res, error.message);
         }
-        return res.status(500).json({ error: true, message: error.message });
+        return ResponseHandler.error(res, error.message);
       }
-      return res.status(500).json({ error: true, message: 'Erro interno do servidor' });
+      return ResponseHandler.error(res, 'Erro interno do servidor');
     }
   }
 
@@ -90,12 +191,12 @@ class EventoController {
         dataFim: dataFim ? String(dataFim) : undefined,
       });
 
-      return res.status(200).json(eventos);
+      return ResponseHandler.success(res, eventos);
     } catch (error) {
       if (error instanceof Error) {
-        return res.status(500).json({ error: true, message: error.message });
+        return ResponseHandler.error(res, error.message);
       }
-      return res.status(500).json({ error: true, message: 'Erro interno do servidor' });
+      return ResponseHandler.error(res, 'Erro interno do servidor');
     }
   }
 
@@ -109,7 +210,7 @@ class EventoController {
       // Validação dos campos
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return ResponseHandler.validationError(res, errors.array());
       }
 
       const { id } = req.params;
@@ -135,7 +236,7 @@ class EventoController {
       }
 
       // Atualiza o evento
-      const { nome, descricao, dataInicio, dataFim, statusEventoId, avaliadoresIds, tipoAvaliacao } = req.body;
+      const { nome, descricao, dataInicio, dataFim, statusEventoId, tipoAvaliacao } = req.body;
       const evento = await eventoService.updateEvento(Number(id), {
         nome,
         banner: bannerPath,
@@ -143,22 +244,21 @@ class EventoController {
         dataInicio,
         dataFim,
         statusEventoId: statusEventoId ? Number(statusEventoId) : undefined,
-        avaliadoresIds: avaliadoresIds ? JSON.parse(avaliadoresIds) : undefined,
         tipoAvaliacao: tipoAvaliacao ? JSON.parse(tipoAvaliacao) : undefined,
       });
 
-      return res.status(200).json(evento);
+      return ResponseHandler.success(res, evento);
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === 'Evento não encontrado') {
-          return res.status(404).json({ error: true, message: error.message });
+          return ResponseHandler.notFound(res, error.message);
         }
         if (error.message === 'A data de início deve ser anterior à data de fim') {
-          return res.status(400).json({ error: true, message: error.message });
+          return ResponseHandler.error(res, error.message, 400);
         }
-        return res.status(500).json({ error: true, message: error.message });
+        return ResponseHandler.error(res, error.message);
       }
-      return res.status(500).json({ error: true, message: 'Erro interno do servidor' });
+      return ResponseHandler.error(res, 'Erro interno do servidor');
     }
   }
 
@@ -185,15 +285,15 @@ class EventoController {
       
       await eventoService.deleteEvento(Number(id));
 
-      return res.status(200).json({ success: true, message: 'Evento excluído com sucesso' });
+      return ResponseHandler.successMessage(res, 'Evento excluído com sucesso');
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === 'Evento não encontrado') {
-          return res.status(404).json({ error: true, message: error.message });
+          return ResponseHandler.notFound(res, error.message);
         }
-        return res.status(500).json({ error: true, message: error.message });
+        return ResponseHandler.error(res, error.message);
       }
-      return res.status(500).json({ error: true, message: 'Erro interno do servidor' });
+      return ResponseHandler.error(res, 'Erro interno do servidor');
     }
   }
 
@@ -207,22 +307,22 @@ class EventoController {
       // Validação dos campos
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return ResponseHandler.validationError(res, errors.array());
       }
 
       const { id } = req.params;
       const { perguntas } = req.body;
       const checklist = await eventoService.createChecklist(Number(id), perguntas);
 
-      return res.status(201).json(checklist);
+      return ResponseHandler.success(res, checklist, 201);
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === 'Evento não encontrado') {
-          return res.status(404).json({ error: true, message: error.message });
+          return ResponseHandler.notFound(res, error.message);
         }
-        return res.status(500).json({ error: true, message: error.message });
+        return ResponseHandler.error(res, error.message);
       }
-      return res.status(500).json({ error: true, message: 'Erro interno do servidor' });
+      return ResponseHandler.error(res, 'Erro interno do servidor');
     }
   }
 
@@ -234,12 +334,12 @@ class EventoController {
   async getAllStatusEvento(req: Request, res: Response): Promise<Response> {
     try {
       const statusEventos = await eventoService.getAllStatusEvento();
-      return res.status(200).json(statusEventos);
+      return ResponseHandler.success(res, statusEventos);
     } catch (error) {
       if (error instanceof Error) {
-        return res.status(500).json({ error: true, message: error.message });
+        return ResponseHandler.error(res, error.message);
       }
-      return res.status(500).json({ error: true, message: 'Erro interno do servidor' });
+      return ResponseHandler.error(res, 'Erro interno do servidor');
     }
   }
 }

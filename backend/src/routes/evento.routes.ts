@@ -92,6 +92,54 @@ router.delete(
 );
 
 /**
+ * @route POST /eventos/:id/avaliadores
+ * @desc Adiciona avaliadores a um evento
+ * @access Private (apenas coordenadores)
+ */
+router.post(
+  '/:id/avaliadores',
+  [
+    authenticate,
+    isCoordenador,
+    param('id').isInt().withMessage('ID deve ser um número inteiro'),
+    body('avaliadoresIds').isArray().withMessage('avaliadoresIds deve ser um array'),
+    body('avaliadoresIds.*').isInt().withMessage('IDs dos avaliadores devem ser números inteiros'),
+  ],
+  eventoController.addAvaliadoresEvento
+);
+
+/**
+ * @route DELETE /eventos/:id/avaliadores
+ * @desc Remove avaliadores de um evento
+ * @access Private (apenas coordenadores)
+ */
+router.delete(
+  '/:id/avaliadores',
+  [
+    authenticate,
+    isCoordenador,
+    param('id').isInt().withMessage('ID deve ser um número inteiro'),
+    body('avaliadoresIds').isArray().withMessage('avaliadoresIds deve ser um array'),
+    body('avaliadoresIds.*').isInt().withMessage('IDs dos avaliadores devem ser números inteiros'),
+  ],
+  eventoController.removeAvaliadoresEvento
+);
+
+/**
+ * @route GET /eventos/:id/avaliadores
+ * @desc Obtém os avaliadores de um evento
+ * @access Private
+ */
+router.get(
+  '/:id/avaliadores',
+  [
+    authenticate,
+    param('id').isInt().withMessage('ID deve ser um número inteiro'),
+  ],
+  eventoController.getAvaliadoresEvento
+);
+
+/**
  * @route POST /eventos/:id/checklist
  * @desc Cria um checklist para um evento
  * @access Private (apenas coordenadores)
