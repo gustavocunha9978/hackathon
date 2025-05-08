@@ -1,11 +1,27 @@
 version: "3.9"
 
 networks:
-  gdi-producao:
-    name: gdi-producao
+  hack:
+    name: hack
     driver: bridge
 
 services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "6969:5432"
+    networks:
+      - hack
+
+
   backend-module:
     build:
       context: ./backend
@@ -13,18 +29,48 @@ services:
     container_name: module-backend-prod
     restart: unless-stopped
     entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://mongo:27017 -timeout 120s -wait-retry-interval 8s ./.docker/entrypoint.prod.sh
+    ports:
+      - "3001:3000"
     networks:
-      - gdi-producao
+      - hack
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`api.localhost`)"
+      - "traefik.http.services.backend.loadbalancer.server.port=3000"
 
-  frontend-module:
-    build:
-      context: ./frontend
-      args:
-        - PUBLIC_URL=/module
-      dockerfile: Dockerfile.prod
-    container_name: module-frontend-prod
-    restart: unless-stopped
-    depends_on:
-      - backend-module
+  # frontend-module:
+  #   build:
+  #     context: ./frontend
+  #     args:
+  #       - PUBLIC_URL=/module
+  #     dockerfile: Dockerfile.prod
+  #   container_name: module-frontend-prod
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - backend-module
+  #   ports:
+  #     - "3000:80"
+  #   networks:
+  #     - hack
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.frontend.rule=Host(`app.localhost`)"
+  #     - "traefik.http.services.frontend.loadbalancer.server.port=80"
+
+  traefik:
+    image: traefik:v2.10
+    container_name: gdi-traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"  # painel do Traefik
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
-      - gdi-producao
+      - hack
+
+volumes:
+  pgdata:
