@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Card,
@@ -25,7 +25,7 @@ import { getEventos, createArtigo } from "@/lib/api";
 import { getUser } from "@/lib/auth";
 import { Upload, AlertTriangle, CheckCircle } from "lucide-react";
 
-export default function SubmissaoPage() {
+function SubmissaoPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const eventoParam = searchParams.get("evento");
@@ -402,5 +402,13 @@ export default function SubmissaoPage() {
         </div>
       </form>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SubmissaoPage />
+    </Suspense>
   );
 }
