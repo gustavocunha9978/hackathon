@@ -16,14 +16,14 @@ export function Header({ user, onMenuToggle }) {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
       <div className="container flex h-16 items-center justify-between pr-5">
         <div className="flex items-center gap-4">
-          <Button
+          {/* <Button
             variant="ghost"
             size="icon"
             onClick={onMenuToggle}
             className="md:hidden"
           >
             <Menu className="h-5 w-5" />
-          </Button>
+          </Button> */}
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/submita-logo.png"
