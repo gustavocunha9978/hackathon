@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getArtigos, getEventos, getUsuarios } from '@/lib/api';
 import { getUser } from '@/lib/auth';
-import { Calendar, Users, FileText, AlertCircle, CheckCircle, Clock, Flag } from 'lucide-react';
+import { Calendar, Users, FileText, AlertCircle, CheckCircle, Clock, Flag, Award } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { formatDate, formatStatus, getStatusColor } from '@/lib/utils';
 
 export default function CoordenadorDashboard() {
   const [artigos, setArtigos] = useState([]);

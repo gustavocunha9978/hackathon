@@ -197,12 +197,13 @@ export default function SubmissaoPage() {
                     <SelectContent>
                       {eventos.length > 0 ? (
                         eventos.map(evento => (
+                          // <SelectItem key={evento.id} value={String(evento.id)}>
                           <SelectItem key={evento.id} value={String(evento.id)}>
                             {evento.nome}
                           </SelectItem>
                         ))
                       ) : (
-                        <SelectItem value="" disabled>
+                        <SelectItem value={null} disabled>
                           Nenhum evento disponível
                         </SelectItem>
                       )}

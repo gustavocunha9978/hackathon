@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getEvento, getArtigos } from '@/lib/api';
-import { formatDate } from '@/lib/utils';
+import { formatDate, formatStatus, getStatusColor } from '@/lib/utils';
 import {
   Calendar,
   Clock,

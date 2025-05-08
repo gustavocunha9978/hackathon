@@ -50,7 +50,7 @@ export async function getArtigos(userId = null) {
         titulo: 'Aplicação de Inteligência Artificial na Saúde',
         resumo: 'Este artigo apresenta uma revisão das aplicações de IA na medicina...',
         area_tematica: 'Tecnologia em Saúde',
-        status: 'aprovado',
+        status: 'submetido',
         autores: [
           { id: 1, nome: 'João Silva' },
           { id: 2, nome: 'Maria Oliveira' }
