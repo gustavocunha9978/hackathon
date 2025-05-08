@@ -43,23 +43,3 @@ export const upload = multer({
 // Configuração específica para upload de PDF de artigos
 export const uploadArtigoPdf = upload.single('arquivo');
 
-// Configuração para upload de imagens (banners de eventos)
-export const uploadBanner = multer({
-  storage: storage,
-  limits: {
-    fileSize: config.maxFileSize
-  },
-  fileFilter: (req, file, cb) => {
-    const allowedMimes = [
-      'image/jpeg',
-      'image/png',
-      'image/gif'
-    ];
-    
-    if (allowedMimes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error('Tipo de arquivo inválido. Apenas JPEG, PNG e GIF são permitidos.'));
-    }
-  }
-}).single('banner');

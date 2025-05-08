@@ -17,11 +17,12 @@ class UsuarioController {
       }
 
       // Cria o usuário
-      const { email, senha, nome, dataNascimento, cargos } = req.body;
+      const { email, senha, nome, idinstituicao, dataNascimento, cargos } = req.body;
       const usuario = await usuarioService.createUsuario({
         email,
         senha,
         nome,
+        idinstituicao,
         dataNascimento,
         cargos,
       });
@@ -95,11 +96,12 @@ class UsuarioController {
       }
 
       const { id } = req.params;
-      const { nome, email, senha, dataNascimento, cargos } = req.body;
+      const { nome, email, senha, idinstituicao, dataNascimento, cargos } = req.body;
       const usuario = await usuarioService.updateUsuario(Number(id), {
         nome,
         email,
         senha,
+        idinstituicao,
         dataNascimento,
         cargos,
       });
