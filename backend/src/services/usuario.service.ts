@@ -48,7 +48,6 @@ class UsuarioService {
 
     // Se houver cargos, associa-os ao usuário
     if (usuarioData.cargos && usuarioData.cargos.length > 0) {
-      // Por padrão, todo usuário tem cargo de autor (3)
       const cargosParaAdicionar = Array.from(new Set([...usuarioData.cargos]));
       
       await Promise.all(
