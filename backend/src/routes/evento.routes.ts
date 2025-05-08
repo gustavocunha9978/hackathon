@@ -1,10 +1,24 @@
 import { Router } from 'express';
-import { body, param, query } from 'express-validator';
+import { body, param, query, validationResult } from 'express-validator';
 import eventoController from '../controllers/evento.controller';
 import { authenticate } from '../middlewares/auth.middleware';
 import { isCoordenador } from '../middlewares/permission.middleware';
-import { uploadBanner } from '../middlewares/upload.middleware';
+import multer from 'multer';
 
+let lastFileSaved = '';
+// Configuração do Multer para upload de arquivos
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Diretório para armazenar os arquivos
+  },
+  filename: (req, file, cb) => {
+    let name = 'banner_' + Date.now() + '-' + Math.round(Math.random() * 1E9) + ".png";
+    lastFileSaved = name;
+    cb(null, name); // Renomeia o arquivo para garantir que não haja duplicatas
+  }
+});
+
+const upload = multer({ storage: storage });
 const router = Router();
 
 /**
@@ -12,16 +26,19 @@ const router = Router();
  * @desc Cria um novo evento
  * @access Private (apenas coordenadores)
  */
+
 router.post(
   '/',
   [
-    uploadBanner,
     body('nome').notEmpty().withMessage('Nome é obrigatório'),
     body('descricao').notEmpty().withMessage('Descrição é obrigatória'),
+    body('idinstituicao').notEmpty().withMessage('Instituição é obrigatória'),
+    body('idtipoAvalicao').notEmpty().isInt().withMessage('Tipo de avaliação é obrigatório'),
     body('dataInicio').notEmpty().withMessage('Data de início é obrigatória'),
     body('dataFim').notEmpty().withMessage('Data de fim é obrigatória'),
   ],
-  eventoController.createEvento
+  eventoController.createEvento,
+  upload.single('banner'),
 );
 
 /**
@@ -60,10 +77,11 @@ router.get(
 router.put(
   '/:id',
   [
-    uploadBanner,
     param('id').isInt().withMessage('ID deve ser um número inteiro'),
     body('nome').optional().notEmpty().withMessage('Nome não pode ser vazio'),
     body('descricao').optional().notEmpty().withMessage('Descrição não pode ser vazia'),
+    body('idinstituicao').notEmpty().withMessage('Instituição é obrigatória'),
+    body('idtipoAvalicao').optional().isInt().withMessage('Tipo de avaliação deve ser um número inteiro'),
     body('dataInicio').optional().isString().withMessage('Data de início deve ser uma string'),
     body('dataFim').optional().isString().withMessage('Data de fim deve ser uma string'),
   ],
