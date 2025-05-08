@@ -16,6 +16,8 @@ export function cn(...inputs) {
  * @returns {string} - Data formatada
  */
 export function formatDate(date) {
+  if (!date) return "";
+
   return new Intl.DateTimeFormat("pt-BR", {
     day: "numeric",
     month: "long",

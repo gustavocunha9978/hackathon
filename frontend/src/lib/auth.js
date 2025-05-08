@@ -1,4 +1,4 @@
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 export function login(email, password) {
   // Simula uma autenticação (em produção isso seria feito via API)
@@ -6,20 +6,23 @@ export function login(email, password) {
     // Simula uma verificação
     if (email && password) {
       const user = {
-        id: '1',
-        name: 'Usuário Teste',
+        id: "1",
+        name: "Usuário Teste",
         email: email,
-        role: email.includes('admin') ? 'coordenador' : 
-              email.includes('avaliador') ? 'avaliador' : 'autor'
+        role: email.includes("admin")
+          ? "coordenador"
+          : email.includes("avaliador")
+          ? "avaliador"
+          : "autor",
       };
-      
+
       // Salva no cookie
-      Cookies.set('user', JSON.stringify(user), { expires: 7 });
-      Cookies.set('token', 'token-simulado', { expires: 7 });
-      
+
+      Cookies.set("token", "token-simulado", { expires: 7 });
+
       resolve(user);
     } else {
-      reject(new Error('Credenciais inválidas'));
+      reject(new Error("Credenciais inválidas"));
     }
   });
 }
@@ -34,30 +37,33 @@ export function createUsuario(data) {
           id: Math.floor(Math.random() * 1000) + 1,
           name: data.nome,
           email: data.email,
-          role: 'autor' // Por padrão, novos usuários são autores
+          role: "autor", // Por padrão, novos usuários são autores
         };
-        
+
         resolve(newUser);
       }, 800);
     } catch (error) {
-      reject(new Error('Erro ao criar usuário'));
+      reject(new Error("Erro ao criar usuário"));
     }
   });
 }
 
 export function logout() {
-  Cookies.remove('user');
-  Cookies.remove('token');
-  window.location.href = '/login';
+  Cookies.remove("user");
+  Cookies.remove("token");
+  window.location.href = "/login";
 }
 
 export function getUser() {
-  const userCookie = Cookies.get('user');
+  const userCookie = Cookies.get("user");
+  c;
   if (userCookie) {
     try {
-      return JSON.parse(userCookie);
+      const user = JSON.parse(userCookie);
+      console.log("user", user);
+      return user;
     } catch (e) {
-      console.error('Erro ao analisar cookie do usuário', e);
+      console.error("Erro ao analisar cookie do usuário", e);
       return null;
     }
   }
@@ -65,7 +71,7 @@ export function getUser() {
 }
 
 export function isAuthenticated() {
-  return !!Cookies.get('token') && !!getUser();
+  return !!Cookies.get("token") && !!getUser();
 }
 
 export function hasRole(requiredRole) {

@@ -12,8 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ArtigoCard } from "@/components/artigos/artigo-card";
 import { EventoCard } from "@/components/eventos/evento-card";
-import { getArtigos, getEventos } from "@/lib/api";
-import { getUser } from "@/lib/auth";
+import { getUser, getArtigos, getEventos } from "../../../lib/api";
 import { Upload, FileText, Clock } from "lucide-react";
 
 export default function AutorDashboard() {
@@ -25,7 +24,7 @@ export default function AutorDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      const userData = getUser();
+      const userData = await getUser();
       setUser(userData);
 
       try {

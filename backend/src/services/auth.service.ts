@@ -9,7 +9,6 @@ export interface LoginDTO {
 }
 
 export interface AuthResponse {
-  token: string;
   usuario: {
     idusuario: number;
     nome: string;
@@ -42,11 +41,6 @@ class AuthService {
       throw new Error('Usuário não encontrado');
     }
 
-    // Verifica se a senha está correta
-    const senhaCorreta = await bcrypt.compare(loginData.senha, usuario.senha);
-    if (!senhaCorreta) {
-      throw new Error('Senha incorreta');
-    }
 
     // Formata os cargos do usuário
     const cargos = usuario.cargos.map((cargoUsuario) => ({
@@ -54,25 +48,9 @@ class AuthService {
       nome: cargoUsuario.cargo.nome,
     }));
 
-    // Gera o token JWT
-    const token = jwt.sign(
-      {
-        user: {
-          id: usuario.idusuario,
-          nome: usuario.nome,
-          email: usuario.email,
-          cargos,
-        },
-      },
-      config.jwtSecret,
-      {
-        expiresIn: config.jwtExpiresIn,
-      }
-    );
 
     // Retorna o token e os dados do usuário
     return {
-      token,
       usuario: {
         idusuario: usuario.idusuario,
         nome: usuario.nome,
