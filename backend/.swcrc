@@ -1,0 +1,31 @@
+{
+  // "$schema": "https://json.schemastore.org/swcrc",
+  "sourceMaps": true,
+  "jsc": {
+    // "loose": true,
+    "parser": {
+      "syntax": "typescript",
+      "decorators": true,
+      "dynamicImport": true
+    },
+    "transform": {
+      "legacyDecorator": true,
+      "decoratorMetadata": true
+    },
+    "target": "es2020",
+    "paths": {
+      "@module/*": ["module/*"],
+      "@infra/*": ["infra/*"],
+      "@domain/*": ["domain/*"],
+      "@config/*": ["config/*"],
+      "@shared/*": ["shared/*"]
+    },
+    "baseUrl": "./src"
+  },
+  "module": {
+    "type": "commonjs"
+    // "noInterop": true,
+    // "importInterop": "swc"
+  },
+  "minify": false
+}

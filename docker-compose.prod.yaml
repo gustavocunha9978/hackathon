@@ -1,0 +1,30 @@
+version: "3.9"
+
+networks:
+  gdi-producao:
+    name: gdi-producao
+    driver: bridge
+
+services:
+  backend-module:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: module-backend-prod
+    restart: unless-stopped
+    entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://mongo:27017 -timeout 120s -wait-retry-interval 8s ./.docker/entrypoint.prod.sh
+    networks:
+      - gdi-producao
+
+  frontend-module:
+    build:
+      context: ./frontend
+      args:
+        - PUBLIC_URL=/module
+      dockerfile: Dockerfile.prod
+    container_name: module-frontend-prod
+    restart: unless-stopped
+    depends_on:
+      - backend-module
+    networks:
+      - gdi-producao

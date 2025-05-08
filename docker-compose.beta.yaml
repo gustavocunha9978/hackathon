@@ -1,0 +1,30 @@
+version: "3.9"
+
+networks:
+  gdi-beta:
+    name: gdi-beta
+    driver: bridge
+
+services:
+  backend-module:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.beta
+    container_name: module-backend-beta
+    restart: unless-stopped
+    entrypoint: dockerize -wait tcp://postgres:5432 -wait tcp://mongo:27017 -timeout 120s -wait-retry-interval 8s ./.docker/entrypoint.beta.sh
+    networks:
+      - gdi-beta
+
+  frontend-module:
+    build:
+      context: ./frontend
+      args:
+        - PUBLIC_URL=/module
+      dockerfile: Dockerfile.beta
+    container_name: module-frontend-beta
+    restart: unless-stopped
+    depends_on:
+      - backend-module
+    networks:
+      - gdi-beta
