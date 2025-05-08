@@ -36,6 +36,15 @@ class ComentarioController {
         return res.status(404).json({ error: true, message: 'Versão do artigo não encontrada' });
       }
 
+<<<<<<< HEAD
+=======
+      // Verifica se o usuário é autor, avaliador ou coordenador
+      const userCargos = req.user?.cargos.map(cargo => cargo.idcargo) || [];
+      const isAutor = versaoArtigo.artigo.autores.some(autor => autor.usuario_idusuario === req.user?.id);
+      const isCoordenador = userCargos.includes(1); // ID do cargo de coordenador
+      const isAvaliador = userCargos.includes(2); // ID do cargo de avaliador
+
+>>>>>>> de5905389f280ce4c75dd991562cefdc97053b3d
       // Cria o comentário
       const comentario = await comentarioService.createComentario({
         descricao,
@@ -79,6 +88,15 @@ class ComentarioController {
       if (!versaoArtigo) {
         return res.status(404).json({ error: true, message: 'Versão do artigo não encontrada' });
       }
+<<<<<<< HEAD
+=======
+
+      // Verifica se o usuário é autor, avaliador ou coordenador
+      const userCargos = req.user?.cargos.map(cargo => cargo.idcargo) || [];
+      const isAutor = versaoArtigo.artigo.autores.some(autor => autor.usuario_idusuario === req.user?.id);
+      const isCoordenador = userCargos.includes(1); // ID do cargo de coordenador
+      const isAvaliador = userCargos.includes(2); // ID do cargo de avaliador
+>>>>>>> de5905389f280ce4c75dd991562cefdc97053b3d
       
       const comentarios = await comentarioService.getComentariosByVersaoArtigo(Number(id));
       return res.status(200).json(comentarios);

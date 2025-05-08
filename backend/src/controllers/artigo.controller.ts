@@ -67,6 +67,10 @@ class ArtigoController {
     try {
       const { id } = req.params;
       const artigo = await artigoService.getArtigoById(Number(id));
+<<<<<<< HEAD
+=======
+
+>>>>>>> de5905389f280ce4c75dd991562cefdc97053b3d
       return res.status(200).json(artigo);
     } catch (error) {
       if (error instanceof Error) {
