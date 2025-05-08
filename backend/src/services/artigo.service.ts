@@ -528,7 +528,7 @@ class ArtigoService {
     const artigoExistente = await prisma.artigo.findUnique({
       where: { idartigo: artigoId },
     });
-
+    console.log("ACHOU O ARTIGO EXISTENTE", artigoExistente);
     if (!artigoExistente) {
       throw new Error('Artigo não encontrado');
     }

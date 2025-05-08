@@ -5,14 +5,12 @@ export interface CreateUsuarioDTO {
   email: string;
   senha: string;
   nome: string;
-  idinstituicao: number;
   dataNascimento: string;
   cargos?: number[];
 }
 
 export interface UpdateUsuarioDTO {
   nome?: string;
-  idinstituicao: number;
   email?: string;
   senha?: string;
   dataNascimento?: string;
@@ -44,9 +42,6 @@ class UsuarioService {
         email: usuarioData.email,
         senha: senhaCriptografada,
         nome: usuarioData.nome,
-        instituicao: {  // Usando 'instituicao' para fazer referência ao modelo
-          connect: { idinstituicao: Number(usuarioData.idinstituicao) }  // Conectando o ID da instituição
-        },
         data_nascimento: usuarioData.dataNascimento,
       },
     });
@@ -88,7 +83,6 @@ class UsuarioService {
     const usuario = await prisma.usuario.findUnique({
       where: { idusuario: usuarioId },
       include: {
-        instituicao: true,  // Inclui os dados da instituição
         cargos: {
           include: {
             cargo: true,
@@ -113,11 +107,6 @@ class UsuarioService {
       email: usuario.email,
       dataNascimento: usuario.data_nascimento,
       cargos,
-      instituicao: usuario.instituicao ? {
-        idinstituicao: usuario.instituicao.idinstituicao,
-        nome: usuario.instituicao.nome,  // Você pode adicionar outros campos conforme necessário
-        prefixo_email: usuario.instituicao.prefixo_email,
-      } : null, // Retorna a instituição ou null caso não exista
     };
   }
 
@@ -212,10 +201,6 @@ class UsuarioService {
 
     if (usuarioData.email) {
       dadosAtualizacao.email = usuarioData.email;
-    }
-
-    if (usuarioData.idinstituicao) {
-      dadosAtualizacao.idinstituicao = usuarioData.idinstituicao;
     }
 
     if (usuarioData.dataNascimento) {

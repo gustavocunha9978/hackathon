@@ -31,18 +31,17 @@ class EventoController {
       }
 
       // Cria o evento
-      const { nome, descricao, idinstituicao, dataInicio, dataFim, idtipoAvalicao } = req.body;
+      const { nome, descricao, dataInicio, dataFim, tipoAvaliacao } = req.body;
       const evento = await eventoService.createEvento({
         nome,
         banner: bannerPath,
         descricao,
-        idinstituicao,
         dataInicio,
         dataFim,
-        idtipoAvalicao: idtipoAvalicao ? JSON.parse(idtipoAvalicao) : undefined,
+        tipoAvaliacao: tipoAvaliacao ? JSON.parse(tipoAvaliacao) : undefined,
       });
 
-      // return ResponseHandler.success(res, evento, 201);
+      return ResponseHandler.success(res, evento, 201);
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === 'A data de início deve ser anterior à data de fim') {
@@ -236,14 +235,14 @@ class EventoController {
       }
 
       // Atualiza o evento
-      const { nome, descricao, dataInicio, dataFim, idtipoAvalicao } = req.body;
+      const { nome, descricao, dataInicio, dataFim, tipoAvaliacao } = req.body;
       const evento = await eventoService.updateEvento(Number(id), {
         nome,
         banner: bannerPath,
         descricao,
         dataInicio,
         dataFim,
-        idtipoAvalicao: idtipoAvalicao ? JSON.parse(idtipoAvalicao) : undefined,
+        tipoAvaliacao: tipoAvaliacao ? JSON.parse(tipoAvaliacao) : undefined,
       });
 
       return ResponseHandler.success(res, evento);

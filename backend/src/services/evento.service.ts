@@ -4,20 +4,18 @@ export interface CreateEventoDTO {
   nome: string;
   banner: string;
   descricao: string;
-  idinstituicao: number;
   dataInicio: string;
   dataFim: string;
-  idtipoAvalicao: number[];
+  tipoAvaliacao?: number[];
 }
 
 export interface UpdateEventoDTO {
   nome?: string;
   banner?: string;
   descricao?: string;
-  idinstituicao?: number;
   dataInicio?: string;
   dataFim?: string;
-  idtipoAvalicao?: number[];
+  tipoAvaliacao?: number[];
 }
 
 export interface EventoFilterDTO {
@@ -45,27 +43,18 @@ class EventoService {
     // Cria o evento
     const evento = await prisma.evento.create({
       data: {
-        nome: "Teste",
-        banner: "/uploads/banner-1746705720189-socorro.png",
-        descricao: "Descrição teste.",
-        instituicao: {
-          connect: { idinstituicao: Number(eventoData.idinstituicao) },
-        },
-        data_inicio: "2025-05-07",
-        data_fim: "2025-05-09",
-        tipoavalicao: {
-          connect: { idtipo_avalicao: Number(eventoData.idtipoAvalicao) },
-          // Ou use 'connect' se você tiver IDs de tipos de avaliação existentes
-          // connect: [{ idtipo_avalicao: 1 }, { idtipo_avalicao: 2 }],
-        },
+        nome: eventoData.nome,
+        banner: eventoData.banner,
+        descricao: eventoData.descricao,
+        data_inicio: eventoData.dataInicio,
+        data_fim: eventoData.dataFim
       },
     });
-    
 
     // Se houver tipos de avaliação, cria-os
-    if (eventoData.idtipoAvalicao && eventoData.idtipoAvalicao.length > 0) {
+    if (eventoData.tipoAvaliacao && eventoData.tipoAvaliacao.length > 0) {
       await Promise.all(
-        eventoData.idtipoAvalicao.map((tipoId) =>
+        eventoData.tipoAvaliacao.map((tipoId) =>
           prisma.tipoAvalicao.create({
             data: {
               nome: `Tipo ${tipoId}`, // Nome temporário, seria melhor receber o nome do tipo
@@ -224,20 +213,19 @@ class EventoService {
             usuario: true,
           },
         },
-        tipoavalicao: true,
+        tipo_avaliacoes: true,
         checklists: {
           include: {
             perguntas: true,
           },
         },
-        instituicao: true,  // Inclui os dados da instituição
       },
     });
-  
+
     if (!evento) {
       throw new Error('Evento não encontrado');
     }
-  
+
     // Formata os dados do evento
     return {
       idevento: evento.idevento,
@@ -250,11 +238,10 @@ class EventoService {
         usuarioIdusuario: avaliador.usuario_idusuario,
         nome: avaliador.usuario.nome,
       })),
-      tipoavalicao: evento.tipoavalicao ? {
-        idtipo_avalicao: evento.tipoavalicao.idtipo_avalicao,
-        nome: evento.tipoavalicao.nome,
-      } : null,
-
+      tipoAvaliacao: evento.tipo_avaliacoes.map((tipo) => ({
+        idAvaliacao: tipo.idtipo_avalicao,
+        nomeAvaliacao: tipo.nome,
+      })),
       checklists: evento.checklists.map((checklist) => ({
         idchecklistEvento: checklist.idchecklist_evento,
         perguntas: checklist.perguntas.map((pergunta) => ({
@@ -262,14 +249,8 @@ class EventoService {
           descricao: pergunta.descricao,
         })),
       })),
-      instituicao: evento.instituicao ? {
-        idinstituicao: evento.instituicao.idinstituicao,
-        nome: evento.instituicao.nome,  // Você pode adicionar outros campos conforme necessário
-        prefixo_email: evento.instituicao.prefixo_email,
-      } : null, // Retorna a instituição ou null caso não exista
     };
   }
-  
 
   /**
    * Busca todos os eventos
@@ -279,80 +260,59 @@ class EventoService {
   async getAllEventos(filtros?: EventoFilterDTO) {
     // Prepara os filtros
     const where: any = {};
-  
+
     if (filtros?.dataInicio) {
       where.data_inicio = {
         gte: filtros.dataInicio,
       };
     }
-  
+
     if (filtros?.dataFim) {
       where.data_fim = {
         lte: filtros.dataFim,
       };
     }
-  
+
     // Busca os eventos
     const eventos = await prisma.evento.findMany({
       where,
       include: {
         avaliadores: {
           include: {
-            usuario: true,  // Inclui o usuário do avaliador
+            usuario: true,
           },
         },
-        instituicao: true,  // Inclui os dados da instituição
       },
     });
-<<<<<<< HEAD
 
-// Formata os dados dos eventos
-  return eventos.map((evento) => {
-    // Lógica para determinar o status do evento
-    const currentDate = new Date();
-    let status = 'planejado'; // Status padrão (planejado)
-
-    if (new Date(evento.data_inicio) <= currentDate && new Date(evento.data_fim) >= currentDate) {
-      status = 'ativo'; // Se a data de início passou e a data de fim não chegou, é 'ativo'
-    } else if (new Date(evento.data_fim) < currentDate) {
-      status = 'finalizado'; // Se a data de fim já passou, é 'finalizado'
-    }
-
-    return {
-      id: evento.idevento,
-      nome: evento.nome,
-      banner: evento.banner,
-      descricao: evento.descricao,
-      data_inicio: evento.data_inicio,
-      data_fim: evento.data_fim,
-      status: status, // Status determinado pela lógica
-=======
-  
     // Formata os dados dos eventos
-    return eventos.map((evento) => ({
-      idevento: evento.idevento,
-      nome: evento.nome,
-      banner: evento.banner,
-      descricao: evento.descricao,
-      idinstituicao: evento.instituicao?.idinstituicao,  // Acessa idinstituicao do relacionamento
-      instituicaoNome: evento.instituicao?.nome,  // Retorna o nome da instituição, caso precise
-      dataInicio: evento.data_inicio,
-      dataFim: evento.data_fim,
->>>>>>> 309d9e5c04a5b5a32e0fa20a1ca6f6f3e886eaf8
-      avaliadores: evento.avaliadores.map((avaliador) => ({
-        usuarioIdusuario: avaliador.usuario_idusuario,
-        nome: avaliador.usuario.nome,
-      })),
-<<<<<<< HEAD
-    };
-  });
-}
-=======
-    }));
+    return eventos.map((evento) => {
+      // Lógica para determinar o status do evento
+      const currentDate = new Date();
+      let status = 'planejado'; // Status padrão (planejado)
+
+      if (new Date(evento.data_inicio) <= currentDate && new Date(evento.data_fim) >= currentDate) {
+        status = 'ativo'; // Se a data de início passou e a data de fim não chegou, é 'ativo'
+      } else if (new Date(evento.data_fim) < currentDate) {
+        status = 'finalizado'; // Se a data de fim já passou, é 'finalizado'
+      }
+
+      return {
+        idevento: evento.idevento,
+        nome: evento.nome,
+        banner: evento.banner,
+        descricao: evento.descricao,
+        dataInicio: evento.data_inicio,
+        dataFim: evento.data_fim,
+        status: status, // Status determinado pela lógica
+        avaliadores: evento.avaliadores.map((avaliador) => ({
+          usuarioIdusuario: avaliador.usuario_idusuario,
+          nome: avaliador.usuario.nome,
+        })),
+      };
+    });
   }
   
-
->>>>>>> 309d9e5c04a5b5a32e0fa20a1ca6f6f3e886eaf8
   /**
    * Atualiza um evento
    * @param eventoId ID do evento
@@ -400,10 +360,6 @@ class EventoService {
     if (eventoData.descricao) {
       dadosAtualizacao.descricao = eventoData.descricao;
     }
-    
-    if (eventoData.idinstituicao) {
-      dadosAtualizacao.idinstituicao = eventoData.idinstituicao;
-    }
 
     if (eventoData.dataInicio) {
       dadosAtualizacao.data_inicio = eventoData.dataInicio;
@@ -419,16 +375,16 @@ class EventoService {
     });
 
     // Se houver tipos de avaliação, atualiza os tipos de avaliação do evento
-    if (eventoData.idtipoAvalicao) {
+    if (eventoData.tipoAvaliacao) {
       // Remove todos os tipos de avaliação atuais
       await prisma.tipoAvalicao.deleteMany({
         where: { evento_idevento: eventoId },
       });
 
       // Adiciona os novos tipos de avaliação
-      if (eventoData.idtipoAvalicao.length > 0) {
+      if (eventoData.tipoAvaliacao.length > 0) {
         await Promise.all(
-          eventoData.idtipoAvalicao.map((tipoId) =>
+          eventoData.tipoAvaliacao.map((tipoId) =>
             prisma.tipoAvalicao.create({
               data: {
                 nome: `Tipo ${tipoId}`, // Nome temporário
