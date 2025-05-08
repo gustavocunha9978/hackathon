@@ -9,6 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 
 export function Header({ user, onMenuToggle }) {
   return (
@@ -24,7 +25,12 @@ export function Header({ user, onMenuToggle }) {
             <Menu className="h-5 w-5" />
           </Button>
           <Link href="/" className="flex items-center gap-2">
-            <img src="/public/submita-logo.png" alt="submita logo" />
+            <Image
+              src="/submita-logo.png"
+              alt="submita logo"
+              width={150}
+              height={50}
+            />
           </Link>
         </div>
 
