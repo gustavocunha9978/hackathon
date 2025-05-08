@@ -67,27 +67,6 @@ class ArtigoController {
     try {
       const { id } = req.params;
       const artigo = await artigoService.getArtigoById(Number(id));
-
-      // Verifica se o usuário tem permissão para acessar o artigo (autor, avaliador ou coordenador)
-      const userCargos = req.user?.cargos.map(cargo => cargo.idcargo) || [];
-      const isAutor = artigo.autores.some(autor => autor.usuario.idusuario === req.user?.id);
-      const isCoordenador = userCargos.includes(1); // ID do cargo de coordenador
-      const isAvaliador = userCargos.includes(2); // ID do cargo de avaliador
-
-      // Se não for autor, avaliador ou coordenador, só pode visualizar artigos aprovados
-      if (!isAutor && !isAvaliador && !isCoordenador && artigo.statusArtigo.id !== 3) {
-        return res.status(403).json({
-          error: true,
-          message: 'Você não tem permissão para acessar este artigo',
-        });
-      }
-
-      // Se for avaliador mas não coordenador, remove informações de autoria
-      if (isAvaliador && !isCoordenador && !isAutor) {
-        // Sistema double-blind: remove identificação de autores
-        delete artigo.autores;
-      }
-
       return res.status(200).json(artigo);
     } catch (error) {
       if (error instanceof Error) {
@@ -133,15 +112,7 @@ class ArtigoController {
   async getArtigosByAutor(req: Request, res: Response): Promise<Response> {
     try {
       const { id } = req.params;
-      
-      // Verifica se o usuário está tentando acessar seus próprios artigos ou se é coordenador
-      if (req.user?.id !== Number(id) && !req.user?.cargos.some(cargo => cargo.idcargo === 1)) {
-        return res.status(403).json({
-          error: true,
-          message: 'Você não tem permissão para acessar os artigos deste autor',
-        });
-      }
-      
+ 
       const artigos = await artigoService.getArtigosByAutor(Number(id));
       return res.status(200).json(artigos);
     } catch (error) {
@@ -160,14 +131,6 @@ class ArtigoController {
   async getArtigosParaAvaliacao(req: Request, res: Response): Promise<Response> {
     try {
       const { id } = req.params;
-      
-      // Verifica se o usuário está tentando acessar seus próprios artigos para avaliação ou se é coordenador
-      if (req.user?.id !== Number(id) && !req.user?.cargos.some(cargo => cargo.idcargo === 1)) {
-        return res.status(403).json({
-          error: true,
-          message: 'Você não tem permissão para acessar os artigos para avaliação deste avaliador',
-        });
-      }
       
       const artigos = await artigoService.getArtigosParaAvaliacao(Number(id));
       
@@ -236,22 +199,6 @@ class ArtigoController {
       const { id } = req.params;
       const caminhoPdf = `/uploads/${req.file.filename}`;
       
-      // Verifica se o usuário é autor do artigo
-      const artigo = await artigoService.getArtigoById(Number(id));
-      const isAutor = artigo.autores.some(autor => autor.usuario.idusuario === req.user?.id);
-      const isCoordenador = req.user?.cargos.some(cargo => cargo.idcargo === 1);
-      
-      if (!isAutor && !isCoordenador) {
-        // Remove o arquivo enviado
-        const filePath = path.join(__dirname, '../../', config.uploadDir, req.file.filename);
-        fs.unlinkSync(filePath);
-        
-        return res.status(403).json({
-          error: true,
-          message: 'Você não tem permissão para enviar uma nova versão deste artigo',
-        });
-      }
-      
       const novaVersao = await artigoService.enviarNovaVersao(Number(id), caminhoPdf);
       return res.status(201).json(novaVersao);
     } catch (error) {
@@ -283,18 +230,7 @@ class ArtigoController {
 
       const { id } = req.params;
       
-      // Verifica se o usuário é autor do artigo ou coordenador
-      const artigo = await artigoService.getArtigoById(Number(id));
-      const isAutor = artigo.autores.some(autor => autor.usuario.idusuario === req.user?.id);
-      const isCoordenador = req.user?.cargos.some(cargo => cargo.idcargo === 1);
-      
-      if (!isAutor && !isCoordenador) {
-        return res.status(403).json({
-          error: true,
-          message: 'Você não tem permissão para atualizar este artigo',
-        });
-      }
-      
+
       const { titulo, resumo, areaTematica, autoresIds, palavrasChave } = req.body;
       const autoresIdsArray = autoresIds ? JSON.parse(autoresIds) : undefined;
       const palavrasChaveArray = palavrasChave ? JSON.parse(palavrasChave) : undefined;

@@ -36,19 +36,6 @@ class ComentarioController {
         return res.status(404).json({ error: true, message: 'Versão do artigo não encontrada' });
       }
 
-      // Verifica se o usuário é autor, avaliador ou coordenador
-      const userCargos = req.user?.cargos.map(cargo => cargo.idcargo) || [];
-      const isAutor = versaoArtigo.artigo.autores.some(autor => autor.usuario_idusuario === req.user?.id);
-      const isCoordenador = userCargos.includes(1); // ID do cargo de coordenador
-      const isAvaliador = userCargos.includes(2); // ID do cargo de avaliador
-
-      if (!isAutor && !isAvaliador && !isCoordenador) {
-        return res.status(403).json({
-          error: true,
-          message: 'Você não tem permissão para comentar neste artigo',
-        });
-      }
-
       // Cria o comentário
       const comentario = await comentarioService.createComentario({
         descricao,
@@ -91,19 +78,6 @@ class ComentarioController {
 
       if (!versaoArtigo) {
         return res.status(404).json({ error: true, message: 'Versão do artigo não encontrada' });
-      }
-
-      // Verifica se o usuário é autor, avaliador ou coordenador
-      const userCargos = req.user?.cargos.map(cargo => cargo.idcargo) || [];
-      const isAutor = versaoArtigo.artigo.autores.some(autor => autor.usuario_idusuario === req.user?.id);
-      const isCoordenador = userCargos.includes(1); // ID do cargo de coordenador
-      const isAvaliador = userCargos.includes(2); // ID do cargo de avaliador
-
-      if (!isAutor && !isAvaliador && !isCoordenador) {
-        return res.status(403).json({
-          error: true,
-          message: 'Você não tem permissão para ver os comentários deste artigo',
-        });
       }
       
       const comentarios = await comentarioService.getComentariosByVersaoArtigo(Number(id));
