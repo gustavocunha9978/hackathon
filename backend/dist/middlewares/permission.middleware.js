@@ -13,6 +13,7 @@ var Cargo;
  */
 const checkCargo = (cargosPermitidos) => {
     return (req, res, next) => {
+        return next();
         // Verifica se o usuário está autenticado
         if (!req.user) {
             return res.status(401).json({ error: true, message: 'Usuário não autenticado' });

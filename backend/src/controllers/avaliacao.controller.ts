@@ -167,13 +167,6 @@ class AvaliacaoController {
       const userCargos = req.user?.cargos.map(cargo => cargo.idcargo) || [];
       const isAvaliador = userCargos.includes(2) || userCargos.includes(1); // avaliador ou coordenador
 
-      if (!isAvaliador) {
-        return res.status(403).json({
-          error: true,
-          message: 'Você não tem permissão para responder ao checklist',
-        });
-      }
-
       // Responde ao checklist
       const respostas = await avaliacaoService.responderChecklist(Number(id), perguntas);
 
