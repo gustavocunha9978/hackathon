@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -9,12 +9,12 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { getEvento, getArtigos } from '@/lib/api';
-import { formatDate, formatStatus, getStatusColor } from '@/lib/utils';
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getEvento, getArtigos } from "@/lib/api";
+import { formatDate, formatStatus, getStatusColor } from "@/lib/utils";
 import {
   Calendar,
   Clock,
@@ -27,17 +27,18 @@ import {
   BarChart,
   UserPlus,
   Mail,
-} from 'lucide-react';
-import Link from 'next/link';
+  Plus,
+} from "lucide-react";
+import Link from "next/link";
 
 export default function EventoDetalhesPage() {
   const params = useParams();
   const router = useRouter();
-  
+
   const [evento, setEvento] = useState(null);
   const [artigos, setArtigos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,20 +47,20 @@ export default function EventoDetalhesPage() {
         // Busca os detalhes do evento
         const eventoData = await getEvento(params.id);
         if (!eventoData) {
-          setError('Evento não encontrado');
+          setError("Evento não encontrado");
         } else {
           setEvento(eventoData);
-          
+
           // Busca artigos associados ao evento
           const artigosData = await getArtigos();
           const artigosDoEvento = artigosData.filter(
-            artigo => artigo.evento_id === parseInt(params.id)
+            (artigo) => artigo.evento_id === parseInt(params.id)
           );
           setArtigos(artigosDoEvento);
         }
       } catch (error) {
-        console.error('Erro ao buscar dados:', error);
-        setError('Ocorreu um erro ao buscar os detalhes do evento');
+        console.error("Erro ao buscar dados:", error);
+        setError("Ocorreu um erro ao buscar os detalhes do evento");
       } finally {
         setIsLoading(false);
       }
@@ -81,7 +82,9 @@ export default function EventoDetalhesPage() {
   if (error || !evento) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <p className="text-destructive mb-4">{error || 'Evento não encontrado'}</p>
+        <p className="text-destructive mb-4">
+          {error || "Evento não encontrado"}
+        </p>
         <Button variant="outline" onClick={() => router.back()}>
           <ChevronLeft className="mr-2 h-4 w-4" />
           Voltar
@@ -92,19 +95,19 @@ export default function EventoDetalhesPage() {
 
   // Contagens por status
   const artigosSubmissao = artigos.filter(
-    artigo => artigo.status === 'submetido'
+    (artigo) => artigo.status === "submetido"
   ).length;
   const artigosAvaliacao = artigos.filter(
-    artigo => artigo.status === 'em_avaliacao'
+    (artigo) => artigo.status === "em_avaliacao"
   ).length;
   const artigosRevisao = artigos.filter(
-    artigo => artigo.status === 'revisao'
+    (artigo) => artigo.status === "revisao"
   ).length;
   const artigosAprovados = artigos.filter(
-    artigo => artigo.status === 'aprovado' || artigo.status === 'publicado'
+    (artigo) => artigo.status === "aprovado" || artigo.status === "publicado"
   ).length;
   const artigosReprovados = artigos.filter(
-    artigo => artigo.status === 'reprovado'
+    (artigo) => artigo.status === "reprovado"
   ).length;
 
   return (
@@ -114,7 +117,7 @@ export default function EventoDetalhesPage() {
           <ChevronLeft className="mr-2 h-4 w-4" />
           Voltar
         </Button>
-        
+
         <div className="flex gap-2">
           <Button variant="outline" asChild>
             <Link href={`/coordenador/eventos/${evento.id}/editar`}>
@@ -138,11 +141,20 @@ export default function EventoDetalhesPage() {
                 {formatDate(evento.data_inicio)} - {formatDate(evento.data_fim)}
               </CardDescription>
             </div>
-            <Badge className={evento.status === 'ativo' ? 'bg-green-100 text-green-800' : 
-                              evento.status === 'planejado' ? 'bg-blue-100 text-blue-800' : 
-                              'bg-gray-100 text-gray-800'}>
-              {evento.status === 'ativo' ? 'Ativo' : 
-               evento.status === 'planejado' ? 'Planejado' : 'Encerrado'}
+            <Badge
+              className={
+                evento.status === "ativo"
+                  ? "bg-green-100 text-green-800"
+                  : evento.status === "planejado"
+                  ? "bg-blue-100 text-blue-800"
+                  : "bg-gray-100 text-gray-800"
+              }
+            >
+              {evento.status === "ativo"
+                ? "Ativo"
+                : evento.status === "planejado"
+                ? "Planejado"
+                : "Encerrado"}
             </Badge>
           </div>
         </CardHeader>
@@ -157,14 +169,18 @@ export default function EventoDetalhesPage() {
               <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
                 <p className="font-medium">Data de Início</p>
-                <p className="text-muted-foreground">{formatDate(evento.data_inicio)}</p>
+                <p className="text-muted-foreground">
+                  {formatDate(evento.data_inicio)}
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-2">
               <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
                 <p className="font-medium">Data de Término</p>
-                <p className="text-muted-foreground">{formatDate(evento.data_fim)}</p>
+                <p className="text-muted-foreground">
+                  {formatDate(evento.data_fim)}
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-2">
@@ -172,8 +188,11 @@ export default function EventoDetalhesPage() {
               <div>
                 <p className="font-medium">Status</p>
                 <p className="text-muted-foreground">
-                  {evento.status === 'ativo' ? 'Em andamento' : 
-                   evento.status === 'encerrado' ? 'Encerrado' : 'Planejado'}
+                  {evento.status === "ativo"
+                    ? "Em andamento"
+                    : evento.status === "encerrado"
+                    ? "Encerrado"
+                    : "Planejado"}
                 </p>
               </div>
             </div>
@@ -181,7 +200,9 @@ export default function EventoDetalhesPage() {
               <Users className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
                 <p className="font-medium">Submissões</p>
-                <p className="text-muted-foreground">{artigos.length} artigos</p>
+                <p className="text-muted-foreground">
+                  {artigos.length} artigos
+                </p>
               </div>
             </div>
           </div>
@@ -246,7 +267,7 @@ export default function EventoDetalhesPage() {
               <BarChart className="mr-2 h-4 w-4" />
               Gerar Relatório
             </Button>
-            {evento.status === 'ativo' && (
+            {evento.status === "ativo" && (
               <Button variant="outline" className="w-full justify-start">
                 <Download className="mr-2 h-4 w-4" />
                 Publicar Anais
@@ -263,27 +284,25 @@ export default function EventoDetalhesPage() {
           <TabsTrigger value="checklist">Checklist</TabsTrigger>
           <TabsTrigger value="estatisticas">Estatísticas</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="artigos" className="space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-xl font-semibold">Artigos Submetidos</h3>
             <Button asChild>
-              <Link href="/coordenador/artigos">
-                Ver Todos
-              </Link>
+              <Link href="/coordenador/artigos">Ver Todos</Link>
             </Button>
           </div>
-          
+
           {artigos.length > 0 ? (
             <div className="space-y-4">
-              {artigos.slice(0, 5).map(artigo => (
+              {artigos.slice(0, 5).map((artigo) => (
                 <Card key={artigo.id}>
                   <CardContent className="p-4">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
                       <div>
                         <h4 className="font-semibold">{artigo.titulo}</h4>
                         <p className="text-sm text-muted-foreground">
-                          {artigo.autores.map(autor => autor.nome).join(', ')}
+                          {artigo.autores.map((autor) => autor.nome).join(", ")}
                         </p>
                       </div>
                       <div className="flex gap-2 items-center">
@@ -311,7 +330,7 @@ export default function EventoDetalhesPage() {
             </Card>
           )}
         </TabsContent>
-        
+
         <TabsContent value="avaliadores">
           <Card>
             <CardHeader>
@@ -333,7 +352,7 @@ export default function EventoDetalhesPage() {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="checklist">
           <Card>
             <CardHeader>
@@ -347,14 +366,19 @@ export default function EventoDetalhesPage() {
                 <p className="text-muted-foreground mb-4">
                   Ainda não há checklist definido para este evento.
                 </p>
-                <Button>
-                  Criar Checklist
+                <Button asChild>
+                  <Link
+                    href={`/coordenador/checklists/novo?evento=${evento.id}`}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Criar Checklist
+                  </Link>
                 </Button>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="estatisticas">
           <Card>
             <CardHeader>
