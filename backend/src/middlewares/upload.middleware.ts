@@ -41,5 +41,5 @@ export const upload = multer({
 });
 
 // Configuração específica para upload de PDF de artigos
-export const uploadArtigoPdf = upload.single('arquivo');
+export const uploadArtigoPdf = upload.single('pdf');
 

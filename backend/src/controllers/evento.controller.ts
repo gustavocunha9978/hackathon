@@ -42,7 +42,7 @@ class EventoController {
         idtipoAvalicao: idtipoAvalicao ? JSON.parse(idtipoAvalicao) : undefined,
       });
 
-      // return ResponseHandler.success(res, evento, 201);
+      return ResponseHandler.success(res, evento, 201);
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === 'A data de início deve ser anterior à data de fim') {

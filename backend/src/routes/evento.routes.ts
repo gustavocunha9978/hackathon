@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/'); // Diretório para armazenar os arquivos
   },
   filename: (req, file, cb) => {
-    let name = 'banner_' + Date.now() + '-' + Math.round(Math.random() * 1E9) + ".png";
+    let name = 'banner_' + Date.now() + '_' + Math.round(Math.random() * 1E9) + ".png";
     lastFileSaved = name;
     cb(null, name); // Renomeia o arquivo para garantir que não haja duplicatas
   }
@@ -29,6 +29,7 @@ const router = Router();
 
 router.post(
   '/',
+  upload.single('banner'),
   [
     body('nome').notEmpty().withMessage('Nome é obrigatório'),
     body('descricao').notEmpty().withMessage('Descrição é obrigatória'),
@@ -38,7 +39,6 @@ router.post(
     body('dataFim').notEmpty().withMessage('Data de fim é obrigatória'),
   ],
   eventoController.createEvento,
-  upload.single('banner'),
 );
 
 /**

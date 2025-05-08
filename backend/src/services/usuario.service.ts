@@ -242,7 +242,7 @@ class UsuarioService {
 
       // Adiciona os novos cargos
       // Por padrão, todo usuário tem cargo de autor (3)
-      const cargosParaAdicionar = Array.from(new Set([...usuarioData.cargos, 3]));
+      const cargosParaAdicionar = Array.from(new Set([...usuarioData.cargos]));
       
       await Promise.all(
         cargosParaAdicionar.map((cargoId) =>

@@ -19,9 +19,9 @@ const storage = multer_1.default.diskStorage({
         cb(null, uploadDir);
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const uniqueSuffix = Date.now() + '_' + Math.round(Math.random() * 1E9);
         const ext = path_1.default.extname(file.originalname);
-        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+        cb(null, file.fieldname + '_' + uniqueSuffix + ext);
     }
 });
 // Filtro para permitir apenas PDFs

@@ -68,26 +68,6 @@ class ArtigoController {
       const { id } = req.params;
       const artigo = await artigoService.getArtigoById(Number(id));
 
-      // Verifica se o usuário tem permissão para acessar o artigo (autor, avaliador ou coordenador)
-      const userCargos = req.user?.cargos.map(cargo => cargo.idcargo) || [];
-      const isAutor = artigo.autores.some(autor => autor.usuario.idusuario === req.user?.id);
-      const isCoordenador = userCargos.includes(1); // ID do cargo de coordenador
-      const isAvaliador = userCargos.includes(2); // ID do cargo de avaliador
-
-      // Se não for autor, avaliador ou coordenador, só pode visualizar artigos aprovados
-      if (!isAutor && !isAvaliador && !isCoordenador && artigo.statusArtigo.id !== 3) {
-        return res.status(403).json({
-          error: true,
-          message: 'Você não tem permissão para acessar este artigo',
-        });
-      }
-
-      // Se for avaliador mas não coordenador, remove informações de autoria
-      if (isAvaliador && !isCoordenador && !isAutor) {
-        // Sistema double-blind: remove identificação de autores
-        delete artigo.autores;
-      }
-
       return res.status(200).json(artigo);
     } catch (error) {
       if (error instanceof Error) {

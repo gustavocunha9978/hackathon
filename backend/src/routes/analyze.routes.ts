@@ -5,6 +5,6 @@ import { AnalyzeController } from "../controllers/AnalyzeController";
 const upload = multer({ dest: "./tmp" });
 const analyzeRoutes = Router();
 
-analyzeRoutes.post("/analyze", upload.single("file"), AnalyzeController.handle);
+analyzeRoutes.post("/analyze", upload.single("pdf"), AnalyzeController.handle);
 
 export { analyzeRoutes };
