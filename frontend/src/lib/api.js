@@ -206,11 +206,11 @@ export async function getArtigos(autorId) {
     },
   ];
 
-  if (userId) {
-    return artigos.filter((artigo) =>
-      artigo.autores.some((autor) => autor.id === parseInt(userId))
-    );
-  }
+  // if (userId) {
+  //   return artigos.filter((artigo) =>
+  //     artigo.autores.some((autor) => autor.id === parseInt(userId))
+  //   );
+  // }
 
   return artigos;
 }
